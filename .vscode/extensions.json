@@ -1,0 +1,29 @@
+{
+	// See https://go.microsoft.com/fwlink/?LinkId=827846 to learn about workspace recommendations.
+	// Extension identifier format: ${publisher}.${name}. Example: vscode.csharp
+	// List of extensions which should be recommended for users of this workspace.
+	"recommendations": [
+		// C / C++ Tools
+		"ms-vscode.cpptools", // C++ tools
+		"SonarSource.sonarlint-vscode", // Linter
+		"streetsidesoftware.code-spell-checker", // Spell checker
+		"VisualStudioExptTeam.vscodeintellicode", // VSCode code completion
+		// "vsciot-vscode.vscode-arduino", // Arduino tools (deprecated, delisted)
+		// "vscode-arduino.vscode-arduino-community", // Arduino tools
+
+		// Debugging Tools
+		"ms-vscode.vscode-serial-monitor", // To use with the Arduino
+
+		// DevOps Tools
+		"redhat.vscode-yaml", // YAML formatter
+
+		// Documentation Tools
+		"cssho.vscode-svgviewer", // View documentation SVGs
+		"DavidAnson.vscode-markdownlint", // Markdown linter
+		"hediet.vscode-drawio"//, // Draw.io (diagrams.net) diagram tool
+		//"NanangP.vscode-wireviz-preview" // Wireviz diagram preview tool
+	],
+	// List of extensions recommended by VS Code that should not be recommended for users of this workspace.
+	"unwantedRecommendations": []
+}
+
