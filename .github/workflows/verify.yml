@@ -1,0 +1,95 @@
+name: Verify Code
+
+on:
+  push:
+  workflow_dispatch:
+  #pull_request: #todo
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    # - run: pwd
+    # - run: ls ../
+    # - uses: actions/checkout@v4
+    # - run: ls
+    #- run: ls ./src/BSI-Logger
+    #- run: mkdir $HOME/Arduino
+    #- run: mkdir  $HOME/Arduino/libraries/
+    #- run: mkdir $HOME/Arduino/libraries/BSI-Logger
+    #- run: ls $HOME
+    #- run: cp --recursive ./BSI-Logger $HOME/Arduino/libraries/BSI-Logger
+    #- run: zip -r ./BSI-Logger.zip ./BSI-Logger
+    #- run: arduino-cli lib install --zip-path ./BSI-Logger.zip
+    #- run: cd ./scripts && ls && ./setupSymlinks.sh
+    - name: Cache and Restore Build Tools
+      id: cache-arduino-compile-sketches
+      uses: actions/cache@v4
+      with:
+        path: |
+          /home/runner/.cache/pypoetry/virtualenvs
+          /opt/hostedtoolcache/Python/
+          /home/runner/work/_actions/arduino/compile-sketches/v1/.python-version
+          /home/runner/work/_actions/arduino/compile-sketches/v1/pyproject.toml
+        key: ${{ runner.os }}-arduino-compile-sketches-2
+    - name: Cache and Restore Libraries
+      id: cache-arduino-libraries
+      uses: actions/cache@v4
+      with:
+        path: |
+          /home/runner/Arduino/libraries
+          /home/runner/.arduino15/packages
+        key: ${{ runner.os }}-${{ github.ref_name }}-2026-Controls_Core-arduino-libraries
+    - name: Restore Cached Build Output
+      id: cache-build-output
+      uses: actions/cache@v4
+      with:
+        path: /home/runner/work/2026-Controls_Core/2026-Controls_Core/build
+        key: ${{ runner.os }}-${{ github.ref_name }}-build-output
+    #- name: Arduino Compile Action Main File Name Compatibility Shim
+    #  run: mv ./BSI_CPWP-2023-TurbineCode.ino ./CPWP-2023-TurbineCode.ino
+    - uses: arduino/compile-sketches@v1
+      with:
+        fqbn: "esp32:esp32:wt32-eth01"
+        sketch-paths: |
+          - ./
+        cli-compile-flags: |
+          - "--build-path"
+          - "/home/runner/work/2026-Controls_Core/2026-Controls_Core/build"
+          - "--export-binaries"
+        libraries: |
+          - name: "Adafruit BusIO"
+          - name: "Adafruit INA260 Library"
+          # - name: "ArduinoJson"
+          - name: "Embedded Template Library ETL"
+          # - name: "ESP32Servo"
+          # - name: "MemoryUsage"
+          - name: "PID"
+          # - name: "Servo"
+        #  - source-path: ./src/BSI-Logger
+        #  - source-path: ./src/PWM
+        enable-deltas-report: true
+        enable-warnings-report: true
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+    - run: pwd
+    - run: ls
+    #- run: ls Common/
+    #- run: ls NacelleController/
+    - run: echo "GITHUB_SHA_SHORT=$(echo $GITHUB_SHA | cut -c 1-6)" >> $GITHUB_ENV
+      # See: https://stackoverflow.com/questions/58886293/getting-current-branch-and-commit-hash-in-github-action
+      # See: https://github.com/Shippable/support/issues/3530
+    - uses: actions/upload-artifact@v4
+      with:
+        # See: https://github.com/orgs/community/discussions/26965
+        # See: https://github.com/orgs/community/discussions/26370
+        name: Verify-${{github.run_number}}_sketches-reports_${{github.event_name}}-${{github.ref_name}}_Commit-${{env.GITHUB_SHA_SHORT}}
+        path: sketches-reports
+  #report: #todo
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - uses: arduino/report-size-deltas@v1
+  #      # Only run the action when the workflow is triggered by a pull request.
+  #      if: github.event_name == 'pull_request'
+  #      with:
+  #        sketches-reports-source: sketches-reports
+  #        github-token: ${{ secrets.GITHUB_TOKEN }}
