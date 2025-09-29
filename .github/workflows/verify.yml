@@ -44,7 +44,7 @@ jobs:
       id: cache-build-output
       uses: actions/cache@v4
       with:
-        path: /home/runner/work/2026-Controls_Core/2026-Controls_Core/build
+        path: /home/runner/work/2026-Controls_Core/build
         key: ${{ runner.os }}-${{ github.ref_name }}-build-output
     #- name: Arduino Compile Action Main File Name Compatibility Shim
     #  run: mv ./BSI_CPWP-2023-TurbineCode.ino ./CPWP-2023-TurbineCode.ino
@@ -55,7 +55,7 @@ jobs:
           - ./
         cli-compile-flags: |
           - "--build-path"
-          - "/home/runner/work/2026-Controls_Core/2026-Controls_Core/build"
+          - "/home/runner/work/2026-Controls_Core/build"
           - "--export-binaries"
         libraries: |
           - name: "Adafruit BusIO"
