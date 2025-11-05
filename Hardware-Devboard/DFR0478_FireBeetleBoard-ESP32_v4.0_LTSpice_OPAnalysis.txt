@@ -1,0 +1,34 @@
+Deep Sleep, USB Suspended
+
+       --- Operating Point ---
+
+V(n001):	 3.3	 voltage
+V(n003):	 3.3	 voltage
+V(n006):	 0	 voltage
+V(n007):	 3.3	 voltage
+V(n008):	 0	 voltage
+V(nc_01):	 0	 voltage
+V(nc_02):	 0	 voltage
+V(nc_03):	 0	 voltage
+V(nc_04):	 0	 voltage
+V(nc_05):	 0	 voltage
+I(C1):	 -3.3e-19	 device_current
+I(C10):	 -1.551e-16	 device_current
+I(C11):	 -3.3e-19	 device_current
+I(C12):	 -1.551e-16	 device_current
+I(C13):	 1.551e-16	 device_current
+I(C2):	 0	 device_current
+I(C5):	 -3.3e-19	 device_current
+I(CH340C_EQV):	 0.000899918	 device_current
+I(D1):	 0	 device_current
+I(D10):	 -3.31e-12	 device_current
+I(D2):	 -1.55578e-18	 device_current
+I(ESP32-WROOM32_EQV):	 1e-05	 device_current
+I(LDO_EQV_BATT):	 0	 device_current
+I(LDO_EQV_USB):	 -0.00033	 device_current
+I(R1):	 0	 device_current
+I(R3):	 0	 device_current
+I(R5):	 0	 device_current
+I(R7):	 0.00033	 device_current
+I(Vdd):	 -0.00123992	 device_current
+
