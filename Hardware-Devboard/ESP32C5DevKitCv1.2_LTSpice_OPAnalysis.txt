@@ -1,0 +1,19 @@
+       --- Operating Point ---
+
+V(n001):	 3.3	 voltage
+V(n002):	 3.3	 voltage
+V(n003):	 0.638299	 voltage
+V(n004):	 0.596386	 voltage
+I(C1):	 3.3e-17	 device_current
+I(C10):	 3.3e-17	 device_current
+I(C2):	 3.3e-19	 device_current
+I(C6):	 3.3e-18	 device_current
+I(C9):	 5.94795e-23	 device_current
+I(D5):	 0.000521902	 device_current
+I(ESP32-C5-WROOM-1/1U_EQV):	 -1.2e-05	 device_current
+I(R11):	 -0.000521902	 device_current
+I(R20):	 3.9759e-06	 device_current
+I(R4):	 3.9759e-06	 device_current
+I(R5):	 3.28626e-18	 device_current
+I(VCC):	 -0.000537878	 device_current
+
