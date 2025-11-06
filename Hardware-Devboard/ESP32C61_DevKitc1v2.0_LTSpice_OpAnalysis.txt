@@ -1,0 +1,16 @@
+       --- Operating Point ---
+
+V(n001):	 3.3	 voltage
+V(n002):	 3.3	 voltage
+V(n003):	 0.638299	 voltage
+I(C1):	 3.3e-17	 device_current
+I(C10):	 3.3e-17	 device_current
+I(C2):	 3.3e-19	 device_current
+I(C6):	 3.3e-18	 device_current
+I(C9):	 3.3e-19	 device_current
+I(D5):	 0.000521902	 device_current
+I(ESP32-CC61-WROOM_EQV):	 -1e-05	 device_current
+I(R11):	 -0.000521902	 device_current
+I(R5):	 3.28626e-18	 device_current
+I(VCC):	 -0.000531902	 device_current
+
