@@ -40,3 +40,5 @@
 # debug information files
 *.dwo
 /Hardware-Devboard/*.log
+/Hardware-Devboard/*.net
+
