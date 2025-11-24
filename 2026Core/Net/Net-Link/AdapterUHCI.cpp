@@ -128,7 +128,7 @@ bool AdapterUHCI::rxEventCallback(uhci_controller_handle_t uhci_ctrl,
 
 /**
  * @see
- * https://docs.espressif.com/projects/esp-idf/en/v5.5.1/esp32s3/api-reference/peripherals/uhci.html#initiating-uhci-transmissionf
+ * https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/uhci.html#initiating-uhci-transmission
  */
 void AdapterUHCI::transmit(etl::array<uint8_t, 0> data, bool block) {
     // Transmit data (non-blocking)
@@ -138,5 +138,38 @@ void AdapterUHCI::transmit(etl::array<uint8_t, 0> data, bool block) {
     // Wait for transmission to complete if blocking is requested
     if (block) { // Wait all transaction finishes
         ESP_ERROR_CHECK(uhci_wait_all_tx_transaction_done(uhci_ctrl, -1));
+    }
+}
+
+/**
+ * @see
+ * https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/uhci.html#initiating-uhci-transmission
+ * @see
+ * https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/uhci.html#_CPPv412uhci_receive24uhci_controller_handle_tP7uint8_t6size_t
+ * @see
+ * https://www.freertos.org/Documentation/02-Kernel/04-API-references/06-Queues/09-xQueueReceive
+ * @see http://www.openrtos.net/Embedded-RTOS-Queues.html
+ */
+void AdapterUHCI::receiveTask() {
+    ESP_ERROR_CHECK(
+        uhci_receive(this->uhci_ctrl, rxData.data(), rxData.max_size()));
+
+    uhci_event_t evt;
+    while (true) {
+        // A queue in task for receiving event triggered by UHCI.
+        constexpr TickType_t MAX_RX_WAIT = 1000 / portTICK_PERIOD_MS;
+        if (xQueueReceive(ctx->uhci_queue, &evt, MAX_RX_WAIT) == pdTRUE) {
+            if (evt == UHCI_EVT_EOF) {
+                ESP_LOGI(TAG, "Rx size: %d\n", ctx->receive_size);
+                break;
+            }
+
+            else {
+                // xQueueReceive sets the task state to blocked and does not
+                // busy wait
+                //  vTaskDelay(1);
+                ESP_LOGW(TAG, "RX timeout\n");
+            }
+        }
     }
 }

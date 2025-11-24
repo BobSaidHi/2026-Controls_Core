@@ -3,6 +3,7 @@
 #include <driver/uart.h>
 #include <driver/uhci.h>
 #include <driver/uhci_types.h>
+#include <freertos/queue.h>
 #include <stdatomic.h>
 
 // #include "uhci.h"
@@ -110,7 +111,13 @@ class AdapterUHCI {
     // MARK: Run Time Config
     const Pins pins;
 
-    // MARK: Types
+    // MARK: Working & Types
+
+    // Working
+    QueueHandle_t uHCIRxQueue;
+
+    // Types
+
     /**
      * @see
      * https://github.com/espressif/esp-idf/blob/v5.5.1/examples/peripherals/uart/uart_dma_ota/main/uart_dma_ota_example_main.c
@@ -139,7 +146,7 @@ class AdapterUHCI {
     } NetStats_T;
 
     typedef struct {
-        // QueueHandle_t uhci_queue = nullptr;
+        QueueHandle_t uhci_queue = uHCIRxQueue;
         size_t receive_size = 0;
         // NetStats_T stats;
         uint8_t *p_receive_data = nullptr;
@@ -151,9 +158,9 @@ class AdapterUHCI {
         NetStats_T txStats;
     } UHCI_Context_t;
 
-    // MARK: Working
-
+    // Working
     uhci_controller_handle_t uhci_ctrl;
+    etl::array<uint8_t, MAX_DATA_LEN> rxData = {0};
     UHCI_Context_t uHCIContext;
 
     // MARK: Callbacks
@@ -205,5 +212,9 @@ class AdapterUHCI {
      */
     void transmit(etl::array<uint8_t, 0> data, bool block = false);
 
-    void receive();
+    // void receive();
+
+    // void transmitTask();
+
+    void receiveTask();
 };
