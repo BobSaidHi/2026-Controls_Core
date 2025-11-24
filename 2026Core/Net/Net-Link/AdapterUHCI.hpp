@@ -110,25 +110,51 @@ class AdapterUHCI {
     // MARK: Run Time Config
     const Pins pins;
 
-    // MARK: Working
+    // MARK: Types
+    /**
+     * @see
+     * https://github.com/espressif/esp-idf/blob/v5.5.1/examples/peripherals/uart/uart_dma_ota/main/uart_dma_ota_example_main.c
+     */
+    typedef enum {
+        UHCI_EVT_PARTIAL_DATA,
+        UHCI_EVT_EOF,
+    } uhci_event_t;
+
     /**
      * @see https://www.reddit.com/r/embedded/comments/zn23of/comment/j0fav6o/
      * @see
      * https://stackoverflow.com/questions/63471387/should-volatile-still-be-used-for-sharing-data-with-isrs-in-modern-c
      * @see https://en.cppreference.com/w/c/language/atomic.html
      * @see https://en.cppreference.com/w/cpp/atomic/atomic.html
+     * @see https://stackoverflow.com/a/16783513
      */
     static_assert(atomic<uint_fast32_t>::is_always_lock_free,
                   "Atomic operations on uint_fast32_t are not lock-free on "
                   "this platform.");
-    _Atomic uint_fast32_t txBits = 0;
-    _Atomic uint_fast32_t txPackets = 0;
-    _Atomic uint_fast32_t txDataRate_bpuS = 0;
-    _Atomic uint_fast32_t rxBits = 0;
-    _Atomic uint_fast32_t rxPackets = 0;
-    _Atomic uint_fast32_t rxDataRate_bpuS = 0;
+    typedef struct {
+        _Atomic uint_fast32_t bits = 0;
+        _Atomic uint_fast32_t packets = 0;
+        _Atomic uint_fast32_t dataRate_bpuS = 0;
+        uint_fast32_t lastStatUpdate_uS = 0;
+    } NetStats_T;
+
+    typedef struct {
+        // QueueHandle_t uhci_queue = nullptr;
+        size_t receive_size = 0;
+        // NetStats_T stats;
+        uint8_t *p_receive_data = nullptr;
+    } RxContext_t;
+
+    typedef struct {
+        RxContext_t rx;
+        NetStats_T rxStats;
+        NetStats_T txStats;
+    } UHCI_Context_t;
+
+    // MARK: Working
 
     uhci_controller_handle_t uhci_ctrl;
+    UHCI_Context_t uHCIContext;
 
     // MARK: Callbacks
 

@@ -45,7 +45,7 @@ bool AdapterUHCI::begin() {
     };
 
     ESP_ERROR_CHECK(
-        uhci_register_event_callbacks(uhci_ctrl, &uHCI_Callbacks, ctx));
+        uhci_register_event_callbacks(uhci_ctrl, &uHCI_Callbacks, uHCIContext));
 }
 
 /**
@@ -57,17 +57,23 @@ bool AdapterUHCI::begin() {
 void AdapterUHCI::txDoneCallback(uhci_controller_handle_t uhci_ctrl,
                                  const uhci_rx_event_data_t *edata,
                                  void *user_ctx) {
+    /**
+     * @brief Get/cast user context
+     * @details parameter `user_ctx` is parsed by the third parameter of
+     * function`uhci_register_event_callbacks`
+     */
+    UHCI_Context_t *ctx = (UHCI_Context_t *)user_ctx;
+    NetStats_T &stats = ctx->txStats;
+
     // Record performance metrics
-    static uint_fast32_t lastStatUpdate_uS = 0;
     uint_fast32_t currentTime_uS = (uint_fast32_t)micros();
 
-    this->txBits += edata->size;
-    this->txPackets++;
+    stats.data_size += edata->size;
+    stats.packets++;
 
-    uint_fast32_t deltaTime_uS = currentTime_uS - lastStatUpdate_uS;
-    this->txDataRate_bpuS = edata->size / deltaTime_uS;
-
-    lastStatUpdate_uS = currentTime_uS;
+    uint_fast32_t deltaTime_uS = currentTime_uS - stats.lastStatUpdate_uS;
+    stats.dataRate_bpuS = edata->size / deltaTime_uS;
+    stats.lastStatUpdate_uS = currentTime_uS;
 }
 
 /**
@@ -75,44 +81,45 @@ void AdapterUHCI::txDoneCallback(uhci_controller_handle_t uhci_ctrl,
  * https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/uhci.html#_CPPv423uhci_tx_done_callback_t
  * @see
  * https://arduino.stackexchange.com/questions/22212/using-millis-and-micros-inside-an-interrupt-routine
+ * @see https://www.man7.org/linux/man-pages/man3/memcpy.3.html
  */
 bool AdapterUHCI::rxEventCallback(uhci_controller_handle_t uhci_ctrl,
                                   const uhci_rx_event_data_t *edata,
                                   void *user_ctx) {
 
     /**
-     * @brief Cast user context
+     * @brief Get/cast user context
      * @details parameter `user_ctx` is parsed by the third parameter of
      * function`uhci_register_event_callbacks`
      */
-    uhci_context_t *ctx = (uhci_context_t *)user_ctx;
+    UHCI_Context_t *ctx = (UHCI_Context_t *)user_ctx;
+    RxContext_t *rxCtx = &ctx->rx;
+    NetStats_T &stats = ctx->rxStats;
 
     BaseType_t xTaskWoken = 0;
     uhci_event_t evt = 0;
 
-    ctx->receive_size += edata->recv_size;
-    memcpy(ctx->p_receive_data, edata->data, edata->recv_size);
+    rxCtx->receive_size += edata->recv_size;
+    memcpy(rxCtx->p_receive_data, edata->data, edata->recv_size);
     if (edata->flags.totally_received) {
         evt = UHCI_EVT_EOF;
         // ctx->receive_size += edata->recv_size;
         // memcpy(ctx->p_receive_data, edata->data, edata->recv_size);
 
         // Record performance metrics
-        static uint_fast32_t lastStatUpdate_uS = 0;
         uint_fast32_t currentTime_uS = (uint_fast32_t)micros();
 
-        this->rxBits += ctx->receive_size;
-        this->rxPackets++;
+        stats.data_size += edata->size;
+        stats.packets++;
 
-        uint_fast32_t deltaTime_uS = currentTime_uS - lastStatUpdate_uS;
-        this->rxDataRate_bpuS = edata->size / deltaTime_uS;
-
-        lastStatUpdate_uS = currentTime_uS;
+        uint_fast32_t deltaTime_uS = currentTime_uS - stats.lastStatUpdate_uS;
+        stats.dataRate_bpuS = edata->size / deltaTime_uS;
+        stats.lastStatUpdate_uS = currentTime_uS;
     } else {
         evt = UHCI_EVT_PARTIAL_DATA;
-        // ctx->receive_size += edata->recv_size;
-        // memcpy(ctx->p_receive_data, edata->data, edata->recv_size);
-        ctx->p_receive_data += edata->recv_size;
+        // rxCtx->receive_size += edata->recv_size;
+        // memcpy(rxCtx->p_receive_data, edata->data, edata->recv_size);
+        rxCtx->p_receive_data += edata->recv_size;
     }
 
     xQueueSendFromISR(ctx->uhci_queue, &evt, &xTaskWoken);
