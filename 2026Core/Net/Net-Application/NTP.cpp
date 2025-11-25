@@ -3,6 +3,7 @@
 
 // Library Imports
 #include <Arduino.h>
+#include "esp_log.h"
 
 SyncedClock::SyncedClock(NetAdapter_A *netAdapter) : netAdapter(netAdapter) {}
 
