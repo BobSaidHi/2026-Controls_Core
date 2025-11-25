@@ -1,3 +1,5 @@
+#pragma once
+
 // MARK: Includes
 #include <cstdint>
 #include <driver/uart.h>
