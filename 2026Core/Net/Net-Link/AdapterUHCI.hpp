@@ -1,10 +1,12 @@
 #pragma once
 
 // MARK: Includes
+#include <atomic>
 #include <cstdint>
 #include <driver/uart.h>
 #include <driver/uhci.h>
 #include <driver/uhci_types.h>
+#include <etl/array.h>
 #include <freertos/queue.h>
 #include <stdatomic.h>
 
@@ -24,15 +26,8 @@
 class AdapterUHCI {
   public: // MARK: Public
     // Baked Config
-    constexpr size_t MAX_DATA_LEN = 250;
+    static constexpr size_t MAX_DATA_LEN = 250;
     static constexpr char *TAG = "UHCI";
-
-    /**
-     * @brief Construct a new UHCI network adapter object
-     * @param pins A struct/pair of integers representing the TX and RX pins
-     */
-    AdapterUHCI(const Pins pins);
-    ~AdapterUHCI() = default;
 
     /**
      * @brief Structure to hold TX and RX pin numbers
@@ -46,6 +41,13 @@ class AdapterUHCI {
     } Pins;
 
     /**
+     * @brief Construct a new UHCI network adapter object
+     * @param pins A struct/pair of integers representing the TX and RX pins
+     */
+    AdapterUHCI(const Pins pins);
+    ~AdapterUHCI() = default;
+
+    /**
      * @brief Complete hardware initialization of the UHCI adapter
      * @return true if initialization was successful, false otherwise
      */
@@ -55,7 +57,8 @@ class AdapterUHCI {
 
   private: // MARK: Private
     // MARK: Compile Time Config
-    constexpr uint_fast8_t UART_PORT = UART_NUM_1; // UART port number
+    // TODO - Should this be configurable?
+    static constexpr uart_port_t UART_PORT = UART_NUM_1; // UART port number
 
     /**
      * @details From example: For uart port configuration, please refer to UART
@@ -72,7 +75,7 @@ class AdapterUHCI {
      * @see
      * https://github.com/espressif/esp-idf/blob/v5.5.1/components/esp_driver_uart/include/driver/uart.h
      */
-    constexpr uart_config_t UART_CFG = {
+    static constexpr uart_config_t UART_CFG = {
         .baud_rate = 2'000'000, // 2 Mbps
         .data_bits = UART_DATA_8_BITS,
         .parity = UART_PARITY_DISABLE,
@@ -89,7 +92,7 @@ class AdapterUHCI {
      * @see
      * https://github.com/espressif/esp-idf/blob/v5.5.1/components/esp_driver_uart/include/driver/uhci.h
      */
-    constexpr uhci_controller_config_t UHCI_CFG = {
+    static constexpr uhci_controller_config_t UHCI_CFG = {
         .uart_port = UART_PORT,     // Connect uart port to UHCI hardware.
         .tx_trans_queue_depth = 30, // Queue depth of transaction queue.
         .max_transmit_size =
@@ -118,7 +121,7 @@ class AdapterUHCI {
     // MARK: Working & Types
 
     // Working
-    QueueHandle_t uHCIRxQueue;
+    static QueueHandle_t uHCIRxQueue;
 
     // Types
 
@@ -131,6 +134,7 @@ class AdapterUHCI {
         UHCI_EVT_EOF,
     } uhci_event_t;
 
+    // static_assert(__cplusplus >= )
     /**
      * @see https://www.reddit.com/r/embedded/comments/zn23of/comment/j0fav6o/
      * @see
@@ -139,7 +143,7 @@ class AdapterUHCI {
      * @see https://en.cppreference.com/w/cpp/atomic/atomic.html
      * @see https://stackoverflow.com/a/16783513
      */
-    static_assert(atomic<uint_fast32_t>::is_always_lock_free,
+    static_assert(std::atomic<uint_fast32_t>::is_always_lock_free,
                   "Atomic operations on uint_fast32_t are not lock-free on "
                   "this platform.");
     typedef struct {

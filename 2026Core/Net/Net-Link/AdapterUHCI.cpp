@@ -1,4 +1,10 @@
+// This is a personal academic project. Dear PVS-Studio, please check it.
+// PVS-Studio Static Code Analyzer for C, C++, C#, and Java:
+// https://pvs-studio.com
+
 #include "AdapterUHCI.hpp"
+#include "esp_log.h"
+#include <Arduino.h>
 
 /**
  * @see
@@ -39,13 +45,13 @@ bool AdapterUHCI::begin() {
      * https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/uhci.html#register-event-callbacks
      */
     constexpr uhci_event_callbacks_t uHCI_Callbacks = {
-        .on_tx_trans_done = AdapterUHCI::txDoneCallback,
-        .on_rx_trans_event = AdapterUHCI::rxEventCallback,
+        .on_tx_trans_done = (*)AdapterUHCI::txDoneCallback,
+        .on_rx_trans_event = (*)AdapterUHCI::rxEventCallback,
         // .on_rx_trans_done = rxCallback, // Does not exist
     };
 
-    ESP_ERROR_CHECK(
-        uhci_register_event_callbacks(uhci_ctrl, &uHCI_Callbacks, uHCIContext));
+    ESP_ERROR_CHECK(uhci_register_event_callbacks(uhci_ctrl, &uHCI_Callbacks,
+                                                  &uHCIContext));
 }
 
 /**
@@ -54,7 +60,7 @@ bool AdapterUHCI::begin() {
  * @see
  * https://arduino.stackexchange.com/questions/22212/using-millis-and-micros-inside-an-interrupt-routine
  */
-void AdapterUHCI::txDoneCallback(uhci_controller_handle_t uhci_ctrl,
+bool AdapterUHCI::txDoneCallback(uhci_controller_handle_t uhci_ctrl,
                                  const uhci_rx_event_data_t *edata,
                                  void *user_ctx) {
     /**
@@ -74,6 +80,8 @@ void AdapterUHCI::txDoneCallback(uhci_controller_handle_t uhci_ctrl,
     uint_fast32_t deltaTime_uS = currentTime_uS - stats.lastStatUpdate_uS;
     stats.dataRate_bpuS = edata->size / deltaTime_uS;
     stats.lastStatUpdate_uS = currentTime_uS;
+
+    return false; // todo - check
 }
 
 /**
@@ -97,7 +105,7 @@ bool AdapterUHCI::rxEventCallback(uhci_controller_handle_t uhci_ctrl,
     NetStats_T &stats = ctx->rxStats;
 
     BaseType_t xTaskWoken = 0;
-    uhci_event_t evt = 0;
+    uhci_event_t evt;
 
     rxCtx->receive_size += edata->recv_size;
     memcpy(rxCtx->p_receive_data, edata->data, edata->recv_size);
@@ -109,7 +117,7 @@ bool AdapterUHCI::rxEventCallback(uhci_controller_handle_t uhci_ctrl,
         // Record performance metrics
         uint_fast32_t currentTime_uS = (uint_fast32_t)micros();
 
-        stats.data_size += edata->size;
+        stats.bits += edata->size;
         stats.packets++;
 
         uint_fast32_t deltaTime_uS = currentTime_uS - stats.lastStatUpdate_uS;
