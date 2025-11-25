@@ -149,6 +149,9 @@ void AdapterUHCI::transmit(etl::array<uint8_t, 0> data, bool block) {
  * @see
  * https://www.freertos.org/Documentation/02-Kernel/04-API-references/06-Queues/09-xQueueReceive
  * @see http://www.openrtos.net/Embedded-RTOS-Queues.html
+ * @see
+ * https://www.freertos.org/Documentation/02-Kernel/04-API-references/02-Task-control/01-vTaskDelay
+ * @see https://docs.arduino.cc/language-reference/en/functions/math/min/
  */
 void AdapterUHCI::receiveTask() {
     ESP_ERROR_CHECK(
@@ -167,8 +170,25 @@ void AdapterUHCI::receiveTask() {
             else {
                 // xQueueReceive sets the task state to blocked and does not
                 // busy wait
-                //  vTaskDelay(1);
                 ESP_LOGW(TAG, "RX timeout\n");
+
+                // Wait at least 1 tick or for 1 byte, allowing the blocking
+                // receive function to wait for the rest of the message
+                constexpr uint32_t SEC_PER_MS = 1'000; // Conversion Factor
+                static_assert(4'000'000 * (uint64_t)SEC_PER_MS < UINT32_MAX,
+                              "Be careful with the UHCI baud rate math!");
+                constexpr uint32_t BAUD_RATE_Bpms =
+                    UART_CFG.baud_rate * SEC_PER_MS /
+                    (8 + 1); // Convert - 8 data bits + 1 stop bit
+                // Get time to block
+                constexpr uint32_t TMP_TIME_PER_BYTE_ms = 1 / BAUD_RATE_Bpms;
+                constexpr uint32_t TIME_PER_BYTE_ms =
+                    max(1, TMP_TIME_PER_BYTE_ms); // Constrain - min is 1
+                // Get time in ticks per byte
+                constexpr TickType_t BAUD_tICKSpB =
+                    portTICK_PERIOD_MS / BAUD_RATE_Bpms;
+                constexpr TickType_t RETRY_DELAY = BAUD_tICKSpB;
+                vTaskDelay(RETRY_DELAY);
             }
         }
     }

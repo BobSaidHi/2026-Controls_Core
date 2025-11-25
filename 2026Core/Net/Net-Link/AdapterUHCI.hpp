@@ -49,6 +49,8 @@ class AdapterUHCI {
      */
     bool begin();
 
+    bool wakeOnUART();
+
   private: // MARK: Private
     // MARK: Compile Time Config
     constexpr uint_fast8_t UART_PORT = UART_NUM_1; // UART port number
