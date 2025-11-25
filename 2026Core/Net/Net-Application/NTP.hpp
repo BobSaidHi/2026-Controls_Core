@@ -1,7 +1,7 @@
 #pragma once
 
 // Custom Imports
-#include "NetAdapter_A.hpp"
+#include "../NetAdapter_A.hpp"
 
 // Library Imports
 
