@@ -8,7 +8,17 @@
 #include <driver/uhci_types.h>
 #include <etl/array.h>
 #include <freertos/queue.h>
-#include <stdatomic.h>
+/**
+ * @details stdatomic.h appears to have limited support in C++ for some reason
+ * @see https://github.com/llvm/llvm-project/issues/37270
+ * @see https://en.cppreference.com/w/cpp/header/stdatomic.h
+ * @see
+ * https://stackoverflow.com/questions/75868704/how-to-properly-mix-stdatomic-between-c-and-c
+ * @see https://en.cppreference.com/w/cpp/atomic/atomic.html
+ */
+// #include <stdatomic.h>
+
+// TODO: Fix Atomic, see also: https://etlcpp.com/atomic.html
 
 // #include "uhci.h"
 // #include "uhci_types.h"
@@ -27,7 +37,11 @@ class AdapterUHCI {
   public: // MARK: Public
     // Baked Config
     static constexpr size_t MAX_DATA_LEN = 250;
-    static constexpr char *TAG = "UHCI";
+    /**
+     * @see
+     * https://stackoverflow.com/questions/54258241/warning-iso-c-forbids-converting-a-string-constant-to-char-for-a-static-c
+     */
+    static constexpr const char *TAG = "UHCI";
 
     /**
      * @brief Structure to hold TX and RX pin numbers
@@ -134,7 +148,12 @@ class AdapterUHCI {
         UHCI_EVT_EOF,
     } uhci_event_t;
 
-    // static_assert(__cplusplus >= )
+    /**
+     * @see https://stackoverflow.com/a/49915536
+     */
+    static_assert(
+        (__cplusplus >= 201703L),
+        "C++17 or higher is required for std::atomic is_always_lock_free");
     /**
      * @see https://www.reddit.com/r/embedded/comments/zn23of/comment/j0fav6o/
      * @see
@@ -147,9 +166,9 @@ class AdapterUHCI {
                   "Atomic operations on uint_fast32_t are not lock-free on "
                   "this platform.");
     typedef struct {
-        _Atomic uint_fast32_t bits = 0;
-        _Atomic uint_fast32_t packets = 0;
-        _Atomic uint_fast32_t dataRate_bpuS = 0;
+        std::atomic<uint_fast32_t> bits = 0;
+        std::atomic<uint_fast32_t> packets = 0;
+        std::atomic<uint_fast32_t> dataRate_bpuS = 0;
         uint_fast32_t lastStatUpdate_uS = 0;
     } NetStats_T;
 
@@ -189,8 +208,10 @@ class AdapterUHCI {
      * @see
      * https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/uhci.html#_CPPv423uhci_tx_done_callback_t
      **/
-    bool txDoneCallback(uhci_controller_handle_t uhci_ctrl,
-                        const uhci_rx_event_data_t *edata, void *user_ctx);
+    // TODO: IRAM_ATTR static needed?
+    IRAM_ATTR static bool txDoneCallback(uhci_controller_handle_t uhci_ctrl,
+                                         const uhci_tx_done_event_data_t *edata,
+                                         void *user_ctx);
 
     /**
      * @brief Callback for when a receive (Rx) transaction event occurs (may be

@@ -43,15 +43,19 @@ bool AdapterUHCI::begin() {
     /** @brief Register Callbacks
      * @see
      * https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/uhci.html#register-event-callbacks
+     * @see
+     * https://stackoverflow.com/questions/68461810/c-get-address-for-non-static-function
      */
     constexpr uhci_event_callbacks_t uHCI_Callbacks = {
-        .on_tx_trans_done = (*)AdapterUHCI::txDoneCallback,
-        .on_rx_trans_event = (*)AdapterUHCI::rxEventCallback,
+        .on_tx_trans_done = &(AdapterUHCI::txDoneCallback),
+        .on_rx_trans_event = &(AdapterUHCI::rxEventCallback),
         // .on_rx_trans_done = rxCallback, // Does not exist
     };
 
     ESP_ERROR_CHECK(uhci_register_event_callbacks(uhci_ctrl, &uHCI_Callbacks,
                                                   &uHCIContext));
+
+    return true; // TODO - check
 }
 
 /**
@@ -60,9 +64,10 @@ bool AdapterUHCI::begin() {
  * @see
  * https://arduino.stackexchange.com/questions/22212/using-millis-and-micros-inside-an-interrupt-routine
  */
-bool AdapterUHCI::txDoneCallback(uhci_controller_handle_t uhci_ctrl,
-                                 const uhci_rx_event_data_t *edata,
-                                 void *user_ctx) {
+IRAM_ATTR static bool
+AdapterUHCI::txDoneCallback(uhci_controller_handle_t uhci_ctrl,
+                            const uhci_tx_done_event_data_t *edata,
+                            void *user_ctx) {
     /**
      * @brief Get/cast user context
      * @details parameter `user_ctx` is parsed by the third parameter of
@@ -74,11 +79,11 @@ bool AdapterUHCI::txDoneCallback(uhci_controller_handle_t uhci_ctrl,
     // Record performance metrics
     uint_fast32_t currentTime_uS = (uint_fast32_t)micros();
 
-    stats.data_size += edata->size;
+    stats.bits += edata->sent_size;
     stats.packets++;
 
     uint_fast32_t deltaTime_uS = currentTime_uS - stats.lastStatUpdate_uS;
-    stats.dataRate_bpuS = edata->size / deltaTime_uS;
+    stats.dataRate_bpuS = edata->sent_size / deltaTime_uS;
     stats.lastStatUpdate_uS = currentTime_uS;
 
     return false; // todo - check
@@ -91,9 +96,10 @@ bool AdapterUHCI::txDoneCallback(uhci_controller_handle_t uhci_ctrl,
  * https://arduino.stackexchange.com/questions/22212/using-millis-and-micros-inside-an-interrupt-routine
  * @see https://www.man7.org/linux/man-pages/man3/memcpy.3.html
  */
-bool AdapterUHCI::rxEventCallback(uhci_controller_handle_t uhci_ctrl,
-                                  const uhci_rx_event_data_t *edata,
-                                  void *user_ctx) {
+IRAM_ATTR static bool
+AdapterUHCI::rxEventCallback(uhci_controller_handle_t uhci_ctrl,
+                             const uhci_rx_event_data_t *edata,
+                             void *user_ctx) {
 
     /**
      * @brief Get/cast user context
@@ -117,11 +123,11 @@ bool AdapterUHCI::rxEventCallback(uhci_controller_handle_t uhci_ctrl,
         // Record performance metrics
         uint_fast32_t currentTime_uS = (uint_fast32_t)micros();
 
-        stats.bits += edata->size;
+        stats.bits += edata->recv_size;
         stats.packets++;
 
         uint_fast32_t deltaTime_uS = currentTime_uS - stats.lastStatUpdate_uS;
-        stats.dataRate_bpuS = edata->size / deltaTime_uS;
+        stats.dataRate_bpuS = edata->recv_size / deltaTime_uS;
         stats.lastStatUpdate_uS = currentTime_uS;
     } else {
         evt = UHCI_EVT_PARTIAL_DATA;
@@ -130,7 +136,7 @@ bool AdapterUHCI::rxEventCallback(uhci_controller_handle_t uhci_ctrl,
         rxCtx->p_receive_data += edata->recv_size;
     }
 
-    xQueueSendFromISR(ctx->uhci_queue, &evt, &xTaskWoken);
+    xQueueSendFromISR(ctx->rx.uhci_queue, &evt, &xTaskWoken);
     return xTaskWoken;
 }
 
@@ -169,9 +175,10 @@ void AdapterUHCI::receiveTask() {
     while (true) {
         // A queue in task for receiving event triggered by UHCI.
         constexpr TickType_t MAX_RX_WAIT = 1000 / portTICK_PERIOD_MS;
-        if (xQueueReceive(ctx->uhci_queue, &evt, MAX_RX_WAIT) == pdTRUE) {
+        if (xQueueReceive(uHCIContext.rx.uhci_queue, &evt, MAX_RX_WAIT) ==
+            pdTRUE) {
             if (evt == UHCI_EVT_EOF) {
-                ESP_LOGI(TAG, "Rx size: %d\n", ctx->receive_size);
+                ESP_LOGI(TAG, "Rx size: %d\n", uHCIContext.rx.receive_size);
                 break;
             }
 
@@ -191,7 +198,8 @@ void AdapterUHCI::receiveTask() {
                 // Get time to block
                 constexpr uint32_t TMP_TIME_PER_BYTE_ms = 1 / BAUD_RATE_Bpms;
                 constexpr uint32_t TIME_PER_BYTE_ms =
-                    max(1, TMP_TIME_PER_BYTE_ms); // Constrain - min is 1
+                    max((const uint32_t)1,
+                        TMP_TIME_PER_BYTE_ms); // Constrain - min is 1
                 // Get time in ticks per byte
                 constexpr TickType_t BAUD_tICKSpB =
                     portTICK_PERIOD_MS / BAUD_RATE_Bpms;

@@ -57,7 +57,11 @@ class Packet {
     uint8_t lengthValid = 0; // Length of valid data in the data array in bytes
 
   public:
-    constexpr char TAG = "P";
+    /**
+     * @see
+     * https://stackoverflow.com/questions/54258241/warning-iso-c-forbids-converting-a-string-constant-to-char-for-a-static-c
+     */
+    static constexpr const char *TAG = "P";
     /* MARK: Public Variables */
     // TODO:
     // https://www.learncpp.com/cpp-tutorial/scoped-enumerations-enum-classes/
@@ -102,7 +106,7 @@ class Packet {
      * @param bin the data to set
      * @param dataLength the length of the data in bytes
      */
-    Packet(const etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> &bin,
+    Packet(etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> &bin,
            const uint_fast8_t dataLength);
 
     /**
@@ -111,7 +115,7 @@ class Packet {
      * @param dataLength the length of the data in bytes
      * @param handlingCode the handling code of the packet
      */
-    Packet(const etl::array<uint8_t, WTbNetConfig::MAX_PACKET_DATA_LENGTH> &bin,
+    Packet(etl::array<uint8_t, WTbNetConfig::MAX_PACKET_DATA_LENGTH> &bin,
            const uint_fast8_t dataLength, uint_fast8_t handlingCode);
 
     ~Packet() = default;
@@ -150,9 +154,9 @@ class Packet {
      * @param dataLength the length of the data in bytes
      * @deprecated Just use setContents()
      */
-    void setContentsRaw(
-        const etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> &bin,
-        const uint_fast8_t dataLength);
+    void
+    setContentsRaw(etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> &bin,
+                   const uint_fast8_t dataLength);
 
     /**
      * @brief Sets the contents of the packet
@@ -160,9 +164,9 @@ class Packet {
      * @param dataLength the length of the data in bytes
      * @param handlingCode the handling code of the packet
      */
-    void setContents(
-        const etl::array<uint8_t, WTbNetConfig::MAX_PACKET_DATA_LENGTH> &bin,
-        const uint_fast8_t dataLength, const uint_fast8_t handlingCode);
+    void
+    setContents(etl::array<uint8_t, WTbNetConfig::MAX_PACKET_DATA_LENGTH> &bin,
+                const uint_fast8_t dataLength, const uint_fast8_t handlingCode);
 
     /**
      * @brief Set the data array

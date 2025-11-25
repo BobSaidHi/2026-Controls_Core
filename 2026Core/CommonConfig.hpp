@@ -14,13 +14,18 @@
 #include <pins_arduino.h>
 
 // TODO: Board Config
-#define BOARD "WT32_ETH01"
+#define WT32_ETH01 0
+#define ESP32C5 1
+#define ESP32S3 2
 
-#if BOARD == "ESP32C5"
+#define BOARD WT32_ETH01
+
+#if BOARD == ESP32C5
 #    warning "Using Nacelle Board"
-#elif BOARD == "ESP32S3"`
+#elif BOARD == ESP32S3
 #    warning "Using Load Board"
-#elif BOARD == "WT32-ETH01"
+// #elif BOARD == WT32_ETH01
+// #    warning "Not using production board"
 #else
 #    warning "Not using production board"
 #endif

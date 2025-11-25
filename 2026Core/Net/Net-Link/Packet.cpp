@@ -9,14 +9,13 @@
 
 Packet::Packet() {};
 
-Packet::Packet(const etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> &bin,
+Packet::Packet(etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> &bin,
                const uint_fast8_t dataLength) {
     setContentsRaw(bin, dataLength);
 }
 
-Packet::Packet(
-    const etl::array<uint8_t, WTbNetConfig::MAX_PACKET_DATA_LENGTH> &bin,
-    const uint_fast8_t dataLength, const uint_fast8_t handlingCode) {
+Packet::Packet(etl::array<uint8_t, WTbNetConfig::MAX_PACKET_DATA_LENGTH> &bin,
+               const uint_fast8_t dataLength, const uint_fast8_t handlingCode) {
     setContents(bin, dataLength, handlingCode);
 }
 
@@ -47,15 +46,15 @@ uint_fast8_t Packet::getLengthValid() const { return this->lengthValid; }
 #pragma region Setters
 
 void Packet::setContentsRaw(
-    const etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> &bin,
+    etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> &bin,
     const uint_fast8_t dataLength) {
     std::copy(bin.begin() + 1, bin.end(), this->dataBuffer.begin());
     this->lengthValid = dataLength;
 }
 
 void Packet::setContents(
-    const etl::array<uint8_t, WTbNetConfig::MAX_PACKET_DATA_LENGTH> &bin,
-    const int_fast8_t dataLength, const uint_fast8_t handlingCode) {
+    etl::array<uint8_t, WTbNetConfig::MAX_PACKET_DATA_LENGTH> &bin,
+    const uint_fast8_t dataLength, const uint_fast8_t handlingCode) {
     // Validate handling Code
     assert(handlingCode <= 0b00011111);
     /*if (handlingCode <= HANDLE_ID_MAX_VAL) {

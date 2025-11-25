@@ -31,7 +31,10 @@ class NetAdapter_A {
     // const etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> toSend;
 
   public: // MARK: Public
-    static constexpr char *TAG = "NA";
+    /**
+    * @see https://stackoverflow.com/questions/54258241/warning-iso-c-forbids-converting-a-string-constant-to-char-for-a-static-c
+    */
+    static constexpr const char *TAG = "NA";
 
     NetAdapter_A();
 
