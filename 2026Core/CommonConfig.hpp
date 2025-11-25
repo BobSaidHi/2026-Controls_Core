@@ -14,7 +14,7 @@
 #include <pins_arduino.h>
 
 // TODO: Board Config
-#define BOARD "WT32-ETH01"
+#define BOARD "WT32_ETH01"
 
 #if BOARD == "ESP32C5"
 #    warning "Using Nacelle Board"
@@ -113,12 +113,12 @@ namespace WTbNetConfig {
                                                     0xFF}; // todo
 
     // Packet Configuration
-    // TODO - MAX_ABS_PACKET_LEN is ESP-NOW specific and should be specified
+    // TODO - MAX_PACKET_ABS_LEN is ESP-NOW specific and should be specified
     // elsewhere
-    constexpr uint_fast8_t MAX_ABS_PACKET_LEN = 250; // TODO
+    constexpr uint_fast8_t MAX_PACKET_ABS_LEN = 250; // TODO
     constexpr uint_fast8_t PACKET_HEADER_LEN = 1;    // todo
     constexpr uint_fast8_t MAX_PACKET_DATA_LENGTH =
-        MAX_ABS_PACKET_LEN - PACKET_HEADER_LEN; // todo
+        MAX_PACKET_ABS_LEN - PACKET_HEADER_LEN; // todo
     constexpr uint_fast8_t RECV_QUEUE_LEN = 10; // CONFIG
     // TODO - packet format
 
