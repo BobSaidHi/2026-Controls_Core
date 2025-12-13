@@ -12,9 +12,6 @@
 
 /* Constants */
 
-// constexpr uint8_t MAC_ADDR_STR_LEN =
-//     sizeof("00:00:00:00:00:00"); // I can't count --Noah
-
 // TODO: Receive support
 
 // TODO: Convert to interface?, split other stuff into MACAdapter or something?
@@ -32,29 +29,14 @@ class NetAdapter_A {
 
   public: // MARK: Public
     /**
-    * @see https://stackoverflow.com/questions/54258241/warning-iso-c-forbids-converting-a-string-constant-to-char-for-a-static-c
-    */
+     * @see
+     * https://stackoverflow.com/questions/54258241/warning-iso-c-forbids-converting-a-string-constant-to-char-for-a-static-c
+     */
     static constexpr const char *TAG = "NA";
 
     NetAdapter_A();
 
-    /* Public Virtual Utility Functions*/
-
-    /**
-     * @brief Get the MAC address of the network interface
-     * @returns the MAC address of the network interface
-     */
-    // virtual etl::array<uint8_t, 6> getMACAddress() const = 0;
-
     /* Public Static Concrete Utility Functions */
-
-    /**
-     * @brief Format a MAC address as a string
-     * @param rawMACAddress the MAC address to format
-     * @returns the formatted MAC address
-     */
-    // static etl::string<MAC_ADDR_STR_LEN>
-    // formatMACAddress(const etl::array<uint8_t, 6> rawMACAddress);
 
     /**
      * @brief Test the throughput of the network
@@ -85,13 +67,29 @@ class NetAdapter_A {
          const uint_fast8_t bytesValid, const bool verifyReceipt) = 0;
 
     /**
+     * @brief Send data
+     *
+     * @param dest_MAC_addr the MAC address of the destination
+     * @param packet to send
+     * @param verifyReceipt whether to verify the data was received
+     */
+    bool send(const etl::array<uint8_t, 6> destMAC_addr, const Packet packet,
+              const bool verifyReceipt);
+
+    /**
      * @brief Send data to all devices
      *
      * @param data the data to send
      * @param bytesValid the number of valid bytes in the data array
-     * @param verifyReceipt whether to verify the data was received
      */
     virtual bool
     sendAll(const etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> &data,
             const uint_fast8_t bytesValid) = 0;
+
+    /**
+     * @brief Send data to all devices
+     *
+     * @param packet to send
+     */
+    bool sendAll(const Packet packet);
 };

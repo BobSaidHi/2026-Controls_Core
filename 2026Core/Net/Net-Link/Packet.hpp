@@ -68,15 +68,18 @@ class Packet {
     enum PacketType : uint_fast8_t {
         // Other
         RESERVED = 0x00,
-        SpeedTest = 0x01,
+        SpeedTest,
+        NetTest,
+        NTPRequest,
+        NTPReply,
 
         // Plain
-        PriorityCmd = 0x02,
-        Cmd = 0x03,
-        Log = 0x04,
-        PriorityData = 0x05,
-        Data = 0x06,
-        LowPriorityData = 0x07,
+        PriorityCmd,
+        Cmd,
+        Log,
+        PriorityData,
+        Data,
+        LowPriorityData,
 
         // MessagePack
         // MsgPck_PriorityCmd = 0x02,
@@ -85,9 +88,6 @@ class Packet {
         // MsgPck_PriorityData = 0x05,
         // MsgPck_Data = 0x06,
         // MsgPck_LowPriorityData = 0x07,
-
-        // Other
-        NetTest = 0x11,
 
         // ProtoBuf
         // PBuf_PriorityCmd = 0x12,
@@ -126,7 +126,7 @@ class Packet {
      * @brief Get the data array
      * @returns a byte array of length MAX_ABS_PACKET_LENGTH
      */
-    etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> getRawPacket();
+    etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> getRawPacket() const;
 
     /**
      * @brief Get the length of the data object

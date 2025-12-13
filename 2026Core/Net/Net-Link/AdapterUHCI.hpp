@@ -1,6 +1,10 @@
 #pragma once
 
 // MARK: Includes
+// Custom Imports
+#include "../NetAdapter_A.hpp"
+
+// Library Imports
 #include <atomic>
 #include <cstdint>
 #include <driver/uart.h>
@@ -8,6 +12,7 @@
 #include <driver/uhci_types.h>
 #include <etl/array.h>
 #include <freertos/queue.h>
+
 /**
  * @details stdatomic.h appears to have limited support in C++ for some reason
  * @see https://github.com/llvm/llvm-project/issues/37270
@@ -33,7 +38,7 @@
  * @author Noah (@BobSaidHi)
  * MARK: AdapterUHCI
  */
-class AdapterUHCI {
+class AdapterUHCI : public NetAdapter_A {
   public: // MARK: Public
     // Baked Config
     static constexpr size_t MAX_DATA_LEN = 250;
@@ -162,9 +167,32 @@ class AdapterUHCI {
      * @see https://en.cppreference.com/w/cpp/atomic/atomic.html
      * @see https://stackoverflow.com/a/16783513
      */
-    static_assert(std::atomic<uint_fast32_t>::is_always_lock_free,
-                  "Atomic operations on uint_fast32_t are not lock-free on "
-                  "this platform.");
+    // static_assert(std::atomic<uint_fast32_t>::is_always_lock_free,
+    //               "Atomic operations on uint_fast32_t are not lock-free on "
+    //               "this platform.");
+    // static_assert(std::atomic<uint32_t>::is_always_lock_free,
+    //               "Atomic operations on uint32_t are not lock-free on "
+    //               "this platform.");
+
+    /**
+     * From C++14.2.0 atomic.h:
+     * Check Lock-free property.
+     *
+     * 0 indicates that the types are never lock-free.
+     * 1 indicates that the types are sometimes lock-free.
+     * 2 indicates that the types are always lock-free.
+     */
+    static_assert(sizeof(int) == sizeof(unsigned int),
+                  "Atomic Lock-free check issue");
+    static_assert(sizeof(int) == sizeof(uint_fast32_t),
+                  "Atomic Lock-free check issue");
+#if (ATOMIC_INT_LOCK_FREE == 0)
+#    error "Atomic operations on int are not lock-free on this platform."
+#elif (ATOMIC_INT_LOCK_FREE == 1)
+#    warning                                                                   \
+        "Atomic operations on int are only sometimes lock-free on this platform."
+#endif
+
     typedef struct {
         std::atomic<uint_fast32_t> bits = 0;
         std::atomic<uint_fast32_t> packets = 0;
@@ -188,7 +216,7 @@ class AdapterUHCI {
     // Working
     uhci_controller_handle_t uhci_ctrl;
     etl::array<uint8_t, MAX_DATA_LEN> rxData = {0};
-    UHCI_Context_t uHCIContext;
+    static UHCI_Context_t uHCIContext;
 
     // MARK: Callbacks
 

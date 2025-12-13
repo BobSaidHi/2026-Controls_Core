@@ -43,7 +43,7 @@ uint_fast8_t Packet::getLengthValid() const { return this->lengthValid; }
 #pragma endregion // Getters
 
 /* Setters */
-#pragma region Setters
+// MARK: Setters
 
 void Packet::setContentsRaw(
     etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> &bin,

@@ -1,5 +1,7 @@
 #pragma once
 
+// TODO: Use std::byte instead of uint8_t for byte-oriented data
+
 // Custom Imports
 #include "../NetAdapter_A.hpp"
 
@@ -11,7 +13,9 @@
  * @brief A clock that can be synced
  */
 class SyncedClock {
-  public:
+  public: // MARK: Public
+    static constexpr const char *TAG = "NTP";
+
     /**
      * @brief Construct a new Synced Clock object
      * @param netAdapter the network adapter to use for time sync
@@ -30,7 +34,9 @@ class SyncedClock {
      * @brief Handle incoming requests
      * @returns true if successful, false otherwise
      */
-    bool requestHandler();
+    bool requestHandler(const etl::array<uint8_t, 6> upstreamMAC);
+
+    // MARK: Getters
 
     /**
      * @brief Get the number of microseconds since the last sync
@@ -48,11 +54,11 @@ class SyncedClock {
      * @brief Get the current correction factor in microseconds
      * @returns the current correction factor in microseconds
      */
-    int_fast8_t getCorrectionFactor() const;
+    unsigned long getCorrectionFactor() const;
 
-  private:
+  private: // MARK: Private
     NetAdapter_A *netAdapter;
     unsigned long lastSyncTime_micros = 0;
     unsigned long timeSyncInit_micros = 0;
-    int_fast8_t correctionFactor_micros = 0;
+    unsigned long correctionFactor_micros = 0;
 };

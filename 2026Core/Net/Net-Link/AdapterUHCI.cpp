@@ -2,10 +2,15 @@
 // PVS-Studio Static Code Analyzer for C, C++, C#, and Java:
 // https://pvs-studio.com
 
+// MARK: Includes
+// Header
 #include "AdapterUHCI.hpp"
+
+// Library Imports
 #include "esp_log.h"
 #include <Arduino.h>
 
+// MARK: Constructorss
 /**
  * @see
  * https://docs.espressif.com/projects/esp-idf/en/v5.5.1/esp32s3/api-reference/peripherals/uhci.html
@@ -18,9 +23,23 @@
  * @see
  * https://github.com/espressif/esp-idf/blob/v5.5.1/examples/peripherals/uart/uart_dma_ota/main/uart_dma_ota_example_main.c
  */
+AdapterUHCI::AdapterUHCI(const Pins pins) : pins(pins) {
+    if (!uHCIContext.rxStats.bits.is_lock_free() ||
+        !uHCIContext.rxStats.packets.is_lock_free() ||
+        !uHCIContext.rxStats.dataRate_bpuS.is_lock_free() ||
+        !uHCIContext.txStats.bits.is_lock_free() ||
+        !uHCIContext.txStats.packets.is_lock_free() ||
+        !uHCIContext.txStats.dataRate_bpuS.is_lock_free()) {
+        ESP_LOGE(TAG, "Atomic operations on uint_fast32_t are not lock-free on "
+                      "this platform.");
+    } else {
+        ESP_LOGI(TAG, "Atomic operations on uint_fast32_t are lock-free on "
+                      "this platform.");
+    }
+    ESP_LOGI(TAG, "init");
+}
 
-AdapterUHCI::AdapterUHCI(const Pins pins) : pins(pins) {}
-
+// MARK: Begin
 bool AdapterUHCI::begin() {
     /**
      * @brief Configure UART
@@ -47,8 +66,8 @@ bool AdapterUHCI::begin() {
      * https://stackoverflow.com/questions/68461810/c-get-address-for-non-static-function
      */
     constexpr uhci_event_callbacks_t uHCI_Callbacks = {
-        .on_tx_trans_done = &(AdapterUHCI::txDoneCallback),
         .on_rx_trans_event = &(AdapterUHCI::rxEventCallback),
+        .on_tx_trans_done = &(AdapterUHCI::txDoneCallback)
         // .on_rx_trans_done = rxCallback, // Does not exist
     };
 
@@ -58,13 +77,15 @@ bool AdapterUHCI::begin() {
     return true; // TODO - check
 }
 
+// MARK: Callbacks
+
 /**
  * @see
  * https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/uhci.html#_CPPv423uhci_tx_done_callback_t
  * @see
  * https://arduino.stackexchange.com/questions/22212/using-millis-and-micros-inside-an-interrupt-routine
  */
-IRAM_ATTR static bool
+IRAM_ATTR bool
 AdapterUHCI::txDoneCallback(uhci_controller_handle_t uhci_ctrl,
                             const uhci_tx_done_event_data_t *edata,
                             void *user_ctx) {
@@ -96,11 +117,9 @@ AdapterUHCI::txDoneCallback(uhci_controller_handle_t uhci_ctrl,
  * https://arduino.stackexchange.com/questions/22212/using-millis-and-micros-inside-an-interrupt-routine
  * @see https://www.man7.org/linux/man-pages/man3/memcpy.3.html
  */
-IRAM_ATTR static bool
-AdapterUHCI::rxEventCallback(uhci_controller_handle_t uhci_ctrl,
-                             const uhci_rx_event_data_t *edata,
-                             void *user_ctx) {
-
+IRAM_ATTR bool AdapterUHCI::rxEventCallback(uhci_controller_handle_t uhci_ctrl,
+                                            const uhci_rx_event_data_t *edata,
+                                            void *user_ctx) {
     /**
      * @brief Get/cast user context
      * @details parameter `user_ctx` is parsed by the third parameter of
@@ -140,6 +159,7 @@ AdapterUHCI::rxEventCallback(uhci_controller_handle_t uhci_ctrl,
     return xTaskWoken;
 }
 
+// MARK: Transmit
 /**
  * @see
  * https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/uhci.html#initiating-uhci-transmission
@@ -155,6 +175,7 @@ void AdapterUHCI::transmit(etl::array<uint8_t, 0> data, bool block) {
     }
 }
 
+// MARK: Receive
 /**
  * @see
  * https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/uhci.html#initiating-uhci-transmission
