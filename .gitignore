@@ -42,3 +42,7 @@
 /Hardware-Devboard/*.log
 /Hardware-Devboard/*.net
 
+*.bak_000f
+*.bak_001d
+*.bak_002d
+*.bak_003d
