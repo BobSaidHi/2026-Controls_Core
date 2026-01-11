@@ -61,4 +61,7 @@ class SyncedClock {
     unsigned long lastSyncTime_micros = 0;
     unsigned long timeSyncInit_micros = 0;
     unsigned long correctionFactor_micros = 0;
+
+    static bool updateSystemTimer(int32_t deltaMicros);
+    static int64_t getSystemTimer();
 };
