@@ -88,7 +88,7 @@ unsigned long SyncedClock::getMicrosSinceSync() const {
 
 unsigned long SyncedClock::getMicros() const {
     // return micros() + correctionFactor_micros;
-    return micos();
+    return micros();
 }
 
 unsigned long SyncedClock::getCorrectionFactor() const {
@@ -115,7 +115,7 @@ unsigned long SyncedClock::getCorrectionFactor() const {
  * • Set SYSTIMER_TIMER_UNITn_LOAD to load the new timer value into the system
  * timer. By such way, the system timer is updated.
  */
-static bool SyncedClock::updateSystemTimer(int32_t deltaMicros) {
+bool SyncedClock::updateSystemTimer(int32_t deltaMicros) {
     /**
      * 3. Read the current count value of system timer, see Section 11.7.1.
      */
@@ -150,7 +150,7 @@ static bool SyncedClock::updateSystemTimer(int32_t deltaMicros) {
      * | Eg.  | 1      | 31.25  | 500    |
      * | Eg2. | -      | 1      | 16     |
      */
-    constexpr CNT_CLCK_PER_MICROS = 16;
+    constexpr int32_t CNT_CLCK_PER_MICROS = 16;
     const int32_t deltaCntClck = deltaMicros * CNT_CLCK_PER_MICROS;
 
     /**
@@ -195,9 +195,11 @@ static bool SyncedClock::updateSystemTimer(int32_t deltaMicros) {
  * SYSTIMER_TIMER_UNITn_VALUE_LO and SYSTIMER_TIMER_UNITn_VALUE_HI respectively.
  * @see
  * https://github.com/espressif/esp-idf/blob/master/components/esp_timer/src/esp_timer_impl_lac.c#L95
+ * @see
+ * https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-guides/hardware-abstraction.html
  * TODO: Switch to official implementation
  */
-static int64_t SyncedClock::getSystemTimer() {
+int64_t SyncedClock::getSystemTimer() {
     /**
      * 1. Set SYSTIMER_TIMER_UNITn_UPDATE to fill the current count value of
      * COMPx into SYSTIMER_TIMER_UNITn_VALUE_HI and
@@ -218,7 +220,7 @@ static int64_t SyncedClock::getSystemTimer() {
      */
     constexpr uint_fast32_t I_MAX = 1000;
     bool success = false;
-    for (uint_fast32_t i = 0; i < I_MAX, i++) {
+    for (uint_fast32_t i = 0; i < I_MAX; i++) {
         if (SYSTIMER.unit_op[UNIT0].timer_unit_value_valid == 1) {
             success = true;
             break;
