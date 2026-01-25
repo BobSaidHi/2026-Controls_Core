@@ -62,6 +62,19 @@ class SyncedClock {
     unsigned long timeSyncInit_micros = 0;
     unsigned long correctionFactor_micros = 0;
 
+    // MARK: System Timer
+
+    /**
+     * @brief Adjusts high power/precision UNIT0 system timer by an amount of
+     * microseconds
+     * @param deltaMicros the amount of microseconds to adjust the timer by
+     */
     static bool updateSystemTimer(int32_t deltaMicros);
+
+    /**
+     * @brief Gets the current value of the high power/precision UNIT0 system
+     * timer
+     * @returns the current value of the system timer
+     */
     static int64_t getSystemTimer();
 };
