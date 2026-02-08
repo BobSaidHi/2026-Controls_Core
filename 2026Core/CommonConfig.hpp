@@ -27,8 +27,8 @@
 // #elif BOARD == WT32_ETH01
 // #    warning "Not using production board"
 #else
-#    warning "Not using production board"
-#endif
+#   warning "Not using production board"
+#endif // BOARD
 
 // TODO: Formatter config
 
