@@ -110,7 +110,7 @@ void AdapterESPNow::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData,
     incomingDataArray.assign(incomingData, incomingData + len);
 
     // todo: Handle the received data
-    PacketHandler::processInboundData(incomingDataArray, MACAddress, len);
+    // PacketHandler::processInboundData(incomingDataArray, MACAddress, len); // todo
 }
 
 /* Network Overrides */
