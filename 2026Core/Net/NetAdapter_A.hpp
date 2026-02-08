@@ -2,6 +2,7 @@
 
 // Custom Imports
 #include "../CommonConfig.hpp"
+#include "Net-Link/Packet.hpp"
 
 // Libraries Imports
 #include <cstdint>
@@ -49,7 +50,7 @@ class NetAdapter_A {
      */
     uint32_t testThroughput(uint_fast8_t maxTime = 60,
                             uint_fast32_t maxBytes = 1000,
-                            /*NetAdapter_A /*adapterInstance,*/
+                            /*NetAdapter_A adapterInstance,*/
                             bool checkLatency = false,
                             bool verifyReceipt = true);
 

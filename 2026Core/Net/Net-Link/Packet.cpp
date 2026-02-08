@@ -22,7 +22,7 @@ Packet::Packet(etl::array<uint8_t, WTbNetConfig::MAX_PACKET_DATA_LENGTH> &bin,
 /* Getters */
 #pragma region Getters
 
-etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> Packet::getRawPacket() {
+etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> Packet::getRawPacket() const {
     /*assert(this->lengthValid >= 0 &&
            this->lengthValid <= WTbNetConfig::MAX_PACKET_LENGTH);*/
     return this->dataBuffer;

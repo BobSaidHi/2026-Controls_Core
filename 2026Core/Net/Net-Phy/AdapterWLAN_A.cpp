@@ -292,10 +292,10 @@ etl::array<uint8_t, 6> AdapterWLAN_A::getMACAddress() const {
         "MACADDR: ";
     ESP_LOGV(TAG, "Created MACAddr string");
     // delay(1500);
-    MACAddressFormatted.append(NetAdapter_A::formatMACAddress(MACAddress));
+    // MACAddressFormatted.append(NetAdapter_A::formatMACAddress(MACAddress)); // todo
     ESP_LOGV(TAG, "Passing formatted MACAddr w/ c_str():");
     // delay(1500);
-    ESP_LOGI(TAG, MACAddressFormatted);
+    ESP_LOGI(TAG, "MACAddrFormatted: %s", MACAddressFormatted.c_str());
     // ESP_LOGV(TAG, "Passed formatted MACAddr w/
     // data():"); ESP_LOGI(TAG,
     // MACAddressFormatted.data()); // still does not work as expected
@@ -324,7 +324,7 @@ etl::array<uint8_t, 6> AdapterWLAN_A::getMACAddress() const {
     ESP_LOGD(TAG, "MACAddrFormatted[22]: ", MACAddressFormatted.at(22));
     ESP_LOGD(TAG, "MACAddrFormatted[23]: ", MACAddressFormatted.at(23));
     ESP_LOGD(TAG, "MACAddrFormatted[24]: ", MACAddressFormatted.at(24));
-    ESP_LOGD(TAG, sessFormatted.at(25));
+    ESP_LOGD(TAG, "MACAddrFormatted[25]: ", MACAddressFormatted.at(25));
     ESP_LOGD(TAG, "MACAddrFormatted[26]: ", MACAddressFormatted.at(26));
 
     // Return the numerical MAC address
@@ -363,7 +363,7 @@ bool AdapterWLAN_A::setMaxTxPower(TxDbmToESP txPower) {
     }
 
     // Verify the transmit power was set correctly
-    ESP_LOGI(TAG, "Set max tx power to ", getMaxTxPower());
+    ESP_LOGI(TAG, "Set max tx power to ", getMaxTxPower_dBm());
     if (getMaxTxPower_Raw() != txPower) {
         ESP_LOGE(TAG, "Tx max power verification failed");
         return false;
