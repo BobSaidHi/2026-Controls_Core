@@ -8,6 +8,20 @@
 // Library Imports
 
 /* Constants */
+#define IMPL_OFFSET 0
+#define IMPL_HWTIMER 1
+#define IMPL_SYSRTC 2
+#define IMPL_POSIX 3
+#define IMPL_USED IMPL_OFFSET
+
+#if IMPL_USED == IMPL_HWTIMER
+// @see
+// https://docs.espressif.com/projects/arduino-esp32/en/latest/api/timer.html
+#    warning "Hardware Timer Implementation Incomplete"
+#elif IMPL_USED == IMPL_POSIX
+#    warning "POSIX Implementation Incomplete"
+#    warning "POSIX Implementation not recommended, it may be slow"
+#endif
 
 /**
  * @brief A clock that can be synced
@@ -62,21 +76,29 @@ class SyncedClock {
     unsigned long timeSyncInit_micros = 0;
     unsigned long correctionFactor_micros = 0;
 
-    // MARK: System Timer
+// MARK: System Timer
+#if IMPL_USED == IMPL_SYSRTC
+#    warning "SysClock RTC Implementation Incomplete"
+#    warning                                                                   \
+        "SysClock RTC Implementation not recommended due to unknown consequences of messing with the primary system clock"
 
-    // uint64_t esp_timer_impl_get_counter_reg(void) const;
+    uint64_t esp_timer_impl_get_counter_reg(void) const;
 
     /**
      * @brief Adjusts high power/precision UNIT0 system timer by an amount of
      * microseconds
      * @param deltaMicros the amount of microseconds to adjust the timer by
+     * @returns true if successful, false otherwise
+     * @deprecated Unfinished, not recommended
      */
-    // static bool updateSystemTimer(int32_t deltaMicros);
+    static bool updateSystemTimer(int32_t deltaMicros);
 
     /**
      * @brief Gets the current value of the high power/precision UNIT0 system
      * timer
      * @returns the current value of the system timer
+     * @deprecated Unfinished, not recommended
      */
-    // static int64_t getSystemTimer();
+    static int64_t getSystemTimer();
+#endif // IMPL_SYSRTC
 };
