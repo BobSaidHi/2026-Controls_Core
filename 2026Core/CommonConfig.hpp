@@ -9,50 +9,23 @@
 #include <cstdint>
 #include <etl/array.h>
 
+/**
+ * @see @see
+ * https://stackoverflow.com/questions/53164773/in-vs-code-show-readable-section-headings-titles-in-minimap@\
+ */
 // MARK: Board Config
-// Make sure the hardware pins are imported
-#include <pins_arduino.h>
 
 // TODO: Board Config
 #define WT32_ETH01 0
-#define ESP32C5 1
-#define ESP32S3 2
-
-#define BOARD WT32_ETH01
-
-#if BOARD == ESP32C5
-#    warning "Using Nacelle Board"
-#elif BOARD == ESP32S3
-#    warning "Using Load Board"
-// #elif BOARD == WT32_ETH01
-// #    warning "Not using production board"
-#else
-#   warning "Not using production board"
-#endif // BOARD
 
 // TODO: Formatter config
 
-// Debugging Setup -  Compile Time Log Level
 /**
- * @see
- * https://stackoverflow.com/questions/53164773/in-vs-code-show-readable-section-headings-titles-in-minimap@\
+ * @brief Debugging Setup
  * @see
  * https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/log.html
  */
 #pragma region Debugging Setup
-// WONTFIX - Maybe create a separate logger constants file if needed.
-// todo
-// #define CT_LOG_LEVEL_MACRO 20 // CONFIG - Compile time log level
-// static_assert(
-//     CT_LOG_LEVEL_MACRO >= 0,
-//     "CT_LOG_LEVEL_MACRO must be an integer greater than or equal to 0");
-// static_assert(
-//     CT_LOG_LEVEL_MACRO <= 100,
-//     "CT_LOG_LEVEL_MACRO must be an integer less than or equal to 100");
-
-// #if CT_LOG_LEVEL_MACRO > 5
-// #define NDEBUG // Disable runtime Assertions
-// #endif
 
 #define PROJECT_ID "WT26" // CONFIG - Project ID to use with logger
 
@@ -70,35 +43,22 @@ namespace WTbCommonConfig {
     // CONFIG - Size of string to store debug message
     constexpr uint_fast8_t MAX_MSG_SIZE = 40; // todo
 
+
+} // end namespace WTbCommonConfig
+
+// MARK: Constants
+namespace CONSTS {
     /* Additional Checks*/
     constexpr uint_fast8_t TIME_TO_MICROS_ROLLOVER_MINS =
         UINT32_MAX / 1000000 / 60;
     constexpr uint_fast8_t TIME_TO_MILLIS_ROLLOVER_DAYS =
         UINT32_MAX / 1000 / 60 / 60 / 24;
 
-/* Standardized Pins - I2C */
-#if USE_WT32_ETH01_PINS
-    constexpr uint_fast8_t I2C_SDA_PIN = IO5;  // todo
-    constexpr uint_fast8_t I2C_SCL_PIN = IO17; // todo
-#else
-    constexpr uint_fast8_t I2C_SDA_PIN = 23; // todo
-    constexpr uint_fast8_t I2C_SCL_PIN = 22; // todo
-#endif
+    /* Time Constants */
+    // constexpr uint32_t MILLIS_PER_SEC = 1000;
+    // constexpr uint32_t SECS_PER_MIN = 60;
 
-/* Standardized Pins - Storage (SPI) */
-#if USE_WT32_ETH01_PINS                         // todo
-    constexpr uint_fast8_t SPI_MISO_PIN = IO14; // todo
-    constexpr uint_fast8_t SPI_CLK_PIN = IO12;  // todo
-    constexpr uint_fast8_t SPI_MOSI_PIN = IO4;  // todo
-    constexpr uint_fast8_t SPI_CS_PIN = IO2;    // todo
-#else                                           // todo
-    constexpr uint_fast8_t SPI_MISO_PIN = MISO; // todo
-    constexpr uint_fast8_t SPI_CLK_PIN = SCK;   // todo
-    constexpr uint_fast8_t SPI_MOSI_PIN = MOSI; // todo
-    constexpr uint_fast8_t SPI_CS_PIN = SS;     // todo
-#endif
-
-} // end namespace WTbCommonConfig
+} // end namespace CONSTS
 
 /**
  * TODO: Detect I2C discount, safely exit, and reconnect
