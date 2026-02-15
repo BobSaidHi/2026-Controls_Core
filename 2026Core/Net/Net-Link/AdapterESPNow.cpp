@@ -35,12 +35,15 @@ bool AdapterESPNow::begin() {
 
     // Once ESPNow is successfully Init, we will register for Send CB to
     // get the status of Transmitted packet
-    esp_now_register_send_cb(AdapterESPNow::OnDataSent);
-    esp_now_register_recv_cb((esp_now_recv_cb_t)AdapterESPNow::OnDataRecv);
-
-    // todo ? Register peer
-
-    // todo ? Add peer
+    if (esp_now_register_send_cb(AdapterESPNow::OnDataSent) != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to register send callback");
+        return false;
+    }
+    if (esp_now_register_recv_cb(
+            (esp_now_recv_cb_t)AdapterESPNow::OnDataRecv) != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to register receive callback");
+        return false;
+    }
 
     return true; // todo
 }
@@ -62,24 +65,30 @@ bool AdapterESPNow::begin() {
 // todo - track stats?
 void AdapterESPNow::OnDataSent(const esp_now_send_info_t *tx_info,
                                esp_now_send_status_t status) {
-    // Log Success (debug) or Failure
-    // if (status == ESP_NOW_SEND_SUCCESS &&
-    //     WTbCommonConfig::DEBUG_LEVEL > BSILogger::LOG_LEVELS::DEBUG) {
-    //     return; // todo: Don't log success unless in debug mode
-    // }
-
-    // Convert the old C Style array to a C++ array
-    etl::array<uint8_t, 6> MACAddress = {0};
-    std::copy(tx_info->des_addr, tx_info->des_addr + 6, MACAddress.begin());
-
-    // Format as a string
-    etl::string<AdapterWLAN_A::MAC_ADDR_STR_LEN> formattedMACAddress =
-        AdapterWLAN_A::formatMACAddress(MACAddress);
-
     if (status == ESP_NOW_SEND_SUCCESS) {
-        ESP_LOGD(TAG, "Data sent to: ", formattedMACAddress.c_str());
+        // todo track bytes sent
+        if (esp_log_get_default_level() >= ESP_LOG_VERBOSE) {
+            // Convert the old C Style array to a C++ array
+            etl::array<uint8_t, 6> MACAddress = {0};
+            std::copy(tx_info->des_addr, tx_info->des_addr + 6,
+                      MACAddress.begin());
+
+            // Format as a string
+            etl::string<AdapterWLAN_A::MAC_ADDR_STR_LEN> formattedMACAddress =
+                AdapterWLAN_A::formatMACAddress(MACAddress);
+            ESP_LOGV(TAG, "Data sent to: %s", formattedMACAddress.c_str());
+        }
     } else {
-        ESP_LOGW(TAG, "Send failed to: ", formattedMACAddress.c_str());
+        // todo track bytes sent
+
+        // Convert the old C Style array to a C++ array
+        etl::array<uint8_t, 6> MACAddress = {0};
+        std::copy(tx_info->des_addr, tx_info->des_addr + 6, MACAddress.begin());
+
+        // Format as a string
+        etl::string<AdapterWLAN_A::MAC_ADDR_STR_LEN> formattedMACAddress =
+            AdapterWLAN_A::formatMACAddress(MACAddress);
+        ESP_LOGW(TAG, "Send failed to: %s", formattedMACAddress.c_str());
     }
 }
 
@@ -88,7 +97,7 @@ void AdapterESPNow::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData,
                                int len) {
     // todo log Serial.print("Bytes received: ");
     // todo log Serial.println(len);s
-    // todo: stats
+    // todo: stats - // todo track bytes sent
 
     // Process MAC Address into a C++ array format
     etl::array<uint8_t, 6> MACAddress = {0};
@@ -110,7 +119,8 @@ void AdapterESPNow::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData,
     incomingDataArray.assign(incomingData, incomingData + len);
 
     // todo: Handle the received data
-    // PacketHandler::processInboundData(incomingDataArray, MACAddress, len); // todo
+    // PacketHandler::processInboundData(incomingDataArray, MACAddress, len); //
+    // todo
 }
 
 /* Network Overrides */
