@@ -13,7 +13,12 @@
  * @author Noah (@BobSaidHi)
  */
 class AdapterESPNow : public NetAdapter_A {
-  private: // MARK: Private
+  private:                         // MARK: Private
+    static uint_fast32_t txEvents; // todo: check against last years code
+    static uint_fast32_t bytesSent;
+    static uint_fast32_t bytesNotSent;
+    static uint_fast32_t rxEvents;
+    static uint_fast32_t bytesReceived;
     // MARK: ESP-IDF Callbacks
 
     /**

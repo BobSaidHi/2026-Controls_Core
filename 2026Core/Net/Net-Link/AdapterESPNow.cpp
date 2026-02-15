@@ -13,6 +13,13 @@
 #include <WiFi.h>
 #include <etl/string.h>
 
+// Initialize Static Member Variables
+uint_fast32_t AdapterESPNow::txEvents = 0;
+uint_fast32_t AdapterESPNow::bytesSent = 0;
+uint_fast32_t AdapterESPNow::bytesNotSent = 0;
+uint_fast32_t AdapterESPNow::rxEvents = 0;
+uint_fast32_t AdapterESPNow::bytesReceived = 0;
+
 /* Standard Functions */
 // MARK: Standard
 
@@ -63,52 +70,42 @@ bool AdapterESPNow::begin() {
 // MARK: ESP-IDF Callbacks
 
 // todo - track stats?
+/**
+ * @brief Callback when data is sent
+ * @see
+ * https://docs.espressif.com/projects/esp-idf/en/v5.5.2/esp32c5/api-reference/network/esp_now.html#send-esp-now-data
+ */
 void AdapterESPNow::OnDataSent(const esp_now_send_info_t *tx_info,
                                esp_now_send_status_t status) {
+    txEvents++;
     if (status == ESP_NOW_SEND_SUCCESS) {
-        // todo track bytes sent
-        if (esp_log_get_default_level() >= ESP_LOG_VERBOSE) {
-            // Convert the old C Style array to a C++ array
-            etl::array<uint8_t, 6> MACAddress = {0};
-            std::copy(tx_info->des_addr, tx_info->des_addr + 6,
-                      MACAddress.begin());
-
-            // Format as a string
-            etl::string<AdapterWLAN_A::MAC_ADDR_STR_LEN> formattedMACAddress =
-                AdapterWLAN_A::formatMACAddress(MACAddress);
-            ESP_LOGV(TAG, "Data sent to: %s", formattedMACAddress.c_str());
-        }
+        bytesSent += tx_info->data_len;
     } else {
-        // todo track bytes sent
-
-        // Convert the old C Style array to a C++ array
-        etl::array<uint8_t, 6> MACAddress = {0};
-        std::copy(tx_info->des_addr, tx_info->des_addr + 6, MACAddress.begin());
-
-        // Format as a string
-        etl::string<AdapterWLAN_A::MAC_ADDR_STR_LEN> formattedMACAddress =
-            AdapterWLAN_A::formatMACAddress(MACAddress);
-        ESP_LOGW(TAG, "Send failed to: %s", formattedMACAddress.c_str());
+        bytesNotSent += tx_info->data_len;
     }
 }
 
-// Callback when data is received
+/**
+ * @brief Callback when data is received
+ * @see
+ * https://docs.espressif.com/projects/esp-idf/en/v5.5.2/esp32c5/api-reference/network/esp_now.html#receiving-esp-now-data
+ */
 void AdapterESPNow::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData,
                                int len) {
     // todo log Serial.print("Bytes received: ");
     // todo log Serial.println(len);s
-    // todo: stats - // todo track bytes sent
+    rxEvents++;
+    bytesReceived += len;
 
     // Process MAC Address into a C++ array format
-    etl::array<uint8_t, 6> MACAddress = {0};
-    std::copy(mac, mac + 6, MACAddress.begin());
-    etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> data = {0};
+    // etl::array<uint8_t, 6> MACAddress = {0};
+    // std::copy(mac, mac + 6, MACAddress.begin());
+    // etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> data = {0};
     // std::copy(mac, mac + len, MACAddress.begin()); // todo ???
 
     // Check te length of the received data
     if (len == 0) {
-        ESP_LOGE(TAG, "Received empty packet from: ",
-                 AdapterWLAN_A::formatMACAddress(MACAddress).c_str());
+        ESP_LOGE(TAG, "Received empty packet");
         return;
     }
 
@@ -118,6 +115,7 @@ void AdapterESPNow::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData,
         0};
     incomingDataArray.assign(incomingData, incomingData + len);
 
+    // todo: enqueue to process later
     // todo: Handle the received data
     // PacketHandler::processInboundData(incomingDataArray, MACAddress, len); //
     // todo
@@ -139,8 +137,10 @@ bool AdapterESPNow::send(
     }
 
     if (result != ESP_OK) {
+        ESP_LOGW(TAG, "Send failed");
         return false;
     } else {
+        ESP_LOGV(TAG, "Data sent");
         return true;
     }
 }
@@ -173,15 +173,17 @@ bool AdapterESPNow::registerPeer(const etl::array<uint8_t, 6> MACAddress) {
     memcpy(peerInfo.peer_addr, MACAddress.data(), sizeof(peerInfo.peer_addr));
 
     // Register Peer
-    if (esp_now_add_peer(&peerInfo) == ESP_OK) {
-        ESP_LOGI(TAG, "Peer registered: ",
-                 AdapterWLAN_A::formatMACAddress(MACAddress).c_str());
-        return true;
-    } else {
+    if (!esp_now_add_peer(&peerInfo) == ESP_OK) {
         ESP_LOGE(TAG, "Peer registration failed: ",
                  AdapterWLAN_A::formatMACAddress(MACAddress).c_str());
         return false;
     }
+    ESP_LOGD(TAG, "Peer registered: ",
+             AdapterWLAN_A::formatMACAddress(MACAddress).c_str());
+
+    // esp_now_set_peer_rate_config(peerInfo.peer_addr, ...);
+
+    return true;
 }
 
 bool AdapterESPNow::deregisterPeer(const etl::array<uint8_t, 6> MACAddress) {
