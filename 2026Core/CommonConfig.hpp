@@ -27,7 +27,9 @@
  */
 #pragma region Debugging Setup
 
-#define PROJECT_ID "WT26" // CONFIG - Project ID to use with logger
+#ifndef PROJECT_ID
+#    define PROJECT_ID "WT26" // CONFIG - Project ID to use with logger
+#endif
 
 #pragma endregion // Debugging Setup
 
@@ -42,7 +44,6 @@ namespace WTbCommonConfig {
     // constexpr uint_fast8_t DEBUG_LEVEL = CT_LOG_LEVEL_MACRO; // todo
     // CONFIG - Size of string to store debug message
     constexpr uint_fast8_t MAX_MSG_SIZE = 40; // todo
-
 
 } // end namespace WTbCommonConfig
 
@@ -74,8 +75,8 @@ namespace WTbNetConfig {
     // Device Configuration
     constexpr etl::array<uint8_t, 6> LOAD_MAC = {0xFF, 0xFF, 0xFF, 0xFF,
                                                  0xFF}; // todo
-    constexpr etl::array<uint8_t, 6> NACELLE_MAC = {0xFF, 0xFF, 0xFF, 0xFF,
-                                                    0xFF}; // todo
+    constexpr etl::array<uint8_t, 6> NACELLE_MAC = {0x30, 0xED, 0xA0,
+                                                    0xE0, 0x6B, 0x78}; // todo
 
     // Packet Configuration
     // TODO - MAX_PACKET_ABS_LEN is ESP-NOW specific and should be specified
