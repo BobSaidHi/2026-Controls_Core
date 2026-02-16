@@ -6,6 +6,7 @@
 #include "../../CommonConfig.hpp"
 #include "Packet.hpp"
 // #include "../Net-Link/PacketHandler.hpp"
+#include "../Net-Phy/AdapterWLAN.hpp"
 #include "../NetAdapter_A.hpp"
 #include "AdapterESPNow.hpp"
 
@@ -173,13 +174,13 @@ bool AdapterESPNow::registerPeer(const etl::array<uint8_t, 6> MACAddress) {
     memcpy(peerInfo.peer_addr, MACAddress.data(), sizeof(peerInfo.peer_addr));
 
     // Register Peer
-    if (!esp_now_add_peer(&peerInfo) == ESP_OK) {
+    if (esp_now_add_peer(&peerInfo) != ESP_OK) {
         ESP_LOGE(TAG, "Peer registration failed: ",
-                 AdapterWLAN_A::formatMACAddress(MACAddress).c_str());
+                 AdapterWLAN::formatMACAddress(MACAddress).c_str());
         return false;
     }
     ESP_LOGD(TAG, "Peer registered: ",
-             AdapterWLAN_A::formatMACAddress(MACAddress).c_str());
+             AdapterWLAN::formatMACAddress(MACAddress).c_str());
 
     // esp_now_set_peer_rate_config(peerInfo.peer_addr, ...);
 

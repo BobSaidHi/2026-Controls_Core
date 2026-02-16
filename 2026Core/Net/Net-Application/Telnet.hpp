@@ -1,7 +1,7 @@
 /**
  * @file Telnet.hpp
  */
-#include "../Net-Phy/AdapterWLAN_A.hpp"
+#include "../Net-Phy/AdapterWLAN.hpp"
 #include <Arduino.h>
 #include <ESPTelnet.h>
 #include <EscapeCodes.h>

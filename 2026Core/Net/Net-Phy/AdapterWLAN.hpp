@@ -11,7 +11,7 @@
  * @brief Network Adapter to wrap WiFi functionality
  * @author Noah (@BobSaidHi)
  */
-class AdapterWLAN_A : public NetAdapter_A {
+class AdapterWLAN : public NetAdapter_A {
   public:
     // MARK: Constants
     static constexpr const char *TAG = "AW";
@@ -23,7 +23,7 @@ class AdapterWLAN_A : public NetAdapter_A {
      * @see
      * https://docs.espressif.com/projects/esp-idf/en/v4.4.5/esp32/api-reference/network/esp_wifi.html#_CPPv425esp_wifi_set_max_tx_power6int8_t
      */
-    enum TxDbmToESP : uint_fast32_t {
+    enum TxDbmToESP : int_fast8_t {
         DBM02 = 8,
         DBM05 = 20,
         DBM07 = 28,
@@ -98,7 +98,7 @@ class AdapterWLAN_A : public NetAdapter_A {
     /**
      * @brief Constructor
      */
-    AdapterWLAN_A();
+    AdapterWLAN();
     /**
      * @brief Destructor to comply with SonarLint Rule cpp:S1234: Polymorphic
      * base class destructor should be either public virtual or protected
@@ -116,8 +116,7 @@ class AdapterWLAN_A : public NetAdapter_A {
      * -- SonarLint Rule cpp:S1234: Polymorphic base class destructor should be
      * either public virtual or protected non-virtual
      */
-    ~AdapterWLAN_A() =
-        default; // todo implement any remaining virtual functions
+    ~AdapterWLAN() = default; // todo implement any remaining virtual functions
 
     // MARK: Public Concrete
 
@@ -139,13 +138,14 @@ class AdapterWLAN_A : public NetAdapter_A {
     /**
      * @brief Initialize the network adapter
      */
-    bool begin() /*override*/; // todo
+    // bool begin() /*override*/; // todo
 
     /**
      * @brief Initialize the network adapter
      * @param wiFiChannel the channel to use
      */
-    bool begin(const uint8_t wiFiChannel = WTbNetConfig::WIFI_DEFAULT_CH);
+    bool
+    begin(const uint8_t wiFiChannel = (uint8_t)WTbNetConfig::WIFI_DEFAULT_CH);
 
     /**
      * @brief Format a MAC address as a string

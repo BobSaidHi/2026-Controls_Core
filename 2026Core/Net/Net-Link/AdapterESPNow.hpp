@@ -1,10 +1,13 @@
 #pragma once
 
 // Custom Imports
-#include "../Net-Phy/AdapterWLAN_A.hpp"
+// #include "../Net-Phy/AdapterWLAN.hpp"
 #include "../NetAdapter_A.hpp"
 
 // Library Imports
+#include <esp_wifi.h>
+// Workaround for header mismatch: esp_now.h expects wifi_txe_rate_config_t
+typedef wifi_tx_rate_config_t wifi_txe_rate_config_t;
 #include <esp_now.h>
 
 /**

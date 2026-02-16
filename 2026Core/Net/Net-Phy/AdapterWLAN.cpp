@@ -3,7 +3,7 @@
 // https://pvs-studio.com
 
 // Import Header
-#include "AdapterWLAN_A.hpp"
+#include "AdapterWLAN.hpp"
 
 // Custom Imports
 #include "../../CommonConfig.hpp" // Link the live src file, not the build file//todo
@@ -16,15 +16,15 @@
 
 // MARK: Standard
 
-AdapterWLAN_A::AdapterWLAN_A() {
+AdapterWLAN::AdapterWLAN() {
     // Initialize Logger
     ESP_LOGI(TAG, "init");
 }
 
 // MARK: Public Concrete
 
-etl::string<AdapterWLAN_A::MAC_ADDR_STR_LEN>
-AdapterWLAN_A::formatMACAddress(const etl::array<uint8_t, 6> rawMACAddress) {
+etl::string<AdapterWLAN::MAC_ADDR_STR_LEN>
+AdapterWLAN::formatMACAddress(const etl::array<uint8_t, 6> rawMACAddress) {
     ESP_LOGV(TAG, "func. called");
     // delay(1500);
     //   Format the MAC address and log it
@@ -73,9 +73,12 @@ AdapterWLAN_A::formatMACAddress(const etl::array<uint8_t, 6> rawMACAddress) {
  * @see https://www.data-alliance.net/blog/wifi-channels-guide
  * @see https://deepbluembedded.com/esp32-wifi-signal-strength-arduino-rssi/
  */
-uint8_t AdapterWLAN_A::identifyOptimalChannel() {
+uint8_t AdapterWLAN::identifyOptimalChannel() {
     // Detect WLAN Environment
-    const uint8_t networksCount = WiFi.scanNetworks();
+    // bool async = false, bool show_hidden = false, bool passive = false,
+    // uint32_t max_ms_per_chan = 300U
+    // esp_wifi_set_band_mode(WIFI_BAND_MODE_2G_ONLY);
+    const int_fast16_t networksCount = WiFi.scanNetworks();
     ESP_LOGI(TAG, "WiFI Net Cnt: %d", networksCount);
     if (networksCount == 0) {
         ESP_LOGV(TAG, "ret");
@@ -86,12 +89,12 @@ uint8_t AdapterWLAN_A::identifyOptimalChannel() {
     // combined strength Weights
 
     // Only bother with the standard/ friendly channels (1, 6, 11)
-    uint16_t ch1RSSITotal = 0;
-    uint16_t ch6RSSITotal = 0;
-    uint16_t ch11RSSITotal = 0;
+    uint_fast16_t ch1RSSITotal = 0;
+    uint_fast16_t ch6RSSITotal = 0;
+    uint_fast16_t ch11RSSITotal = 0;
 
     // Check each network
-    for (uint8_t i = 0; i < networksCount; i++) {
+    for (int_fast16_t i = 0; i < networksCount; i++) {
         // Check the channel of the network
         ESP_LOGD(TAG, "RSSI: %d", WiFi.RSSI(i));
         // Could probably ave done something clever with subtraction, and maybe
@@ -107,14 +110,15 @@ uint8_t AdapterWLAN_A::identifyOptimalChannel() {
         // 120 + 0 (max strength) = 120
         // 120 + -120 (min strength) = 0
         // Lowest number is still the least interference but its a uint
-        uint16_t inverseRSSI = (120 + WiFi.RSSI(i));
-        ESP_LOGD(TAG, "invRSSI: %ds", inverseRSSI);
+        uint_fast16_t inverseRSSI = (120 + WiFi.RSSI(i));
+        ESP_LOGD(TAG, "Ch.: %d, RSSI: %d, iRSSI: %d", WiFi.channel(i),
+                 WiFi.RSSI(i), inverseRSSI);
         if (WiFi.channel(i) == 1) { // Ch. 1
             ch1RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_0_WEIGHT);
         } else if (WiFi.channel(i) == 2) { // Ch. 2 overlaps with ch. 1 and 6
             ch1RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_1_WEIGHT);
             ch6RSSITotal +=
-                (uint16_t)(inverseRSSI * WTbNetConfig::OFFSET_4_WEIGHT);
+                (uint_fast16_t)(inverseRSSI * WTbNetConfig::OFFSET_4_WEIGHT);
         } else if (WiFi.channel(i) == 3) { // Ch. 3 overlaps with ch. 1 and 6
             ch1RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_2_WEIGHT);
             ch6RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_3_WEIGHT);
@@ -123,14 +127,14 @@ uint8_t AdapterWLAN_A::identifyOptimalChannel() {
             ch6RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_2_WEIGHT);
         } else if (WiFi.channel(i) == 5) { // Ch. 5 overlaps with ch. 1 and 6
             ch1RSSITotal +=
-                (uint16_t)(inverseRSSI * WTbNetConfig::OFFSET_4_WEIGHT);
+                (uint_fast16_t)(inverseRSSI * WTbNetConfig::OFFSET_4_WEIGHT);
             ch6RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_1_WEIGHT);
         } else if (WiFi.channel(i) == 6) { // Ch. 6
             ch6RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_0_WEIGHT);
         } else if (WiFi.channel(i) == 7) { // Ch. 7 overlaps with ch. 6 and 11
             ch6RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_1_WEIGHT);
             ch11RSSITotal +=
-                (uint16_t)(inverseRSSI * WTbNetConfig::OFFSET_4_WEIGHT);
+                (uint_fast16_t)(inverseRSSI * WTbNetConfig::OFFSET_4_WEIGHT);
         } else if (WiFi.channel(i) == 8) { // Ch. 8 overlaps with ch. 6 and 11
             ch6RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_2_WEIGHT);
             ch11RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_3_WEIGHT);
@@ -139,16 +143,15 @@ uint8_t AdapterWLAN_A::identifyOptimalChannel() {
             ch11RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_2_WEIGHT);
         } else if (WiFi.channel(i) == 10) { // Ch. 10 overlaps with ch. 6 and 11
             ch6RSSITotal +=
-                (uint16_t)(inverseRSSI * WTbNetConfig::OFFSET_4_WEIGHT);
+                (uint_fast16_t)(inverseRSSI * WTbNetConfig::OFFSET_4_WEIGHT);
             ch11RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_1_WEIGHT);
         } else if (WiFi.channel(i) == 11) { // Ch. 11
             ch11RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_0_WEIGHT);
         } else { // Should never run in the North America
-            ESP_LOGE(TAG, "Detected Illegal WiFi Ch.");
+            ESP_LOGE(TAG, "Detected Illegal WiFi Ch.: %d", WiFi.channel(i));
         }
-        ESP_LOGD(TAG, "ch1RSSSSubTotal: %d", ch1RSSITotal);
-        ESP_LOGD(TAG, "ch6RSSSSubTotal: %d", ch6RSSITotal);
-        ESP_LOGD(TAG, "ch11RSSSSubTotal: %d", ch11RSSITotal);
+        ESP_LOGD(TAG, "Subtotals: C1: %d, C6: %d, C11: %d", ch1RSSITotal,
+                 ch6RSSITotal, ch11RSSITotal);
     }
 
     // Return the channel with the least interference
@@ -176,7 +179,7 @@ uint8_t AdapterWLAN_A::identifyOptimalChannel() {
  * @see https://www.geeksforgeeks.org/cpp-20-std-format/
  * @see https://stackoverflow.com/a/69326849
  */
-etl::array<uint8_t, 6> AdapterWLAN_A::getMACAddress() const {
+etl::array<uint8_t, 6> AdapterWLAN::getMACAddress() const {
     ESP_LOGV(TAG, "func called");
     // delay(1000);
 
@@ -203,6 +206,9 @@ etl::array<uint8_t, 6> AdapterWLAN_A::getMACAddress() const {
         // Configure WiFi
         WiFi.mode(WIFI_STA);
         WiFi.STA.begin();
+        WiFi.STA.bandwidth(WIFI_BW_HT20);
+        WiFi.setBandMode(WIFI_BAND_MODE_2G_ONLY);
+        // WiFi.setTxPower();
     } else if (WiFIStatus == WL_CONNECT_FAILED) {
         ESP_LOGW(TAG, "Restarting WiFi2");
         leaveWifiOn = false;
@@ -210,6 +216,8 @@ etl::array<uint8_t, 6> AdapterWLAN_A::getMACAddress() const {
         // Configure WiFi
         WiFi.mode(WIFI_STA);
         WiFi.STA.begin();
+        WiFi.STA.bandwidth(WIFI_BW_HT20);
+        WiFi.setBandMode(WIFI_BAND_MODE_2G_ONLY);
     } else if (WiFIStatus == WL_CONNECTION_LOST) {
         ESP_LOGW(TAG, "Restarting WiFi3");
         leaveWifiOn = false;
@@ -217,14 +225,17 @@ etl::array<uint8_t, 6> AdapterWLAN_A::getMACAddress() const {
         // Configure WiFi
         WiFi.mode(WIFI_STA);
         WiFi.STA.begin();
+        WiFi.STA.bandwidth(WIFI_BW_HT20);
+        WiFi.setBandMode(WIFI_BAND_MODE_2G_ONLY);
     } else if (WiFIStatus == WL_DISCONNECTED) {
         leaveWifiOn = false;
 
         ESP_LOGW(TAG, "Starting WiFi4");
         // Configure WiFi
         WiFi.mode(WIFI_STA);
-        ESP_LOGV(TAG, "WiFi mode set");
         WiFi.STA.begin();
+        WiFi.STA.bandwidth(WIFI_BW_HT20);
+        WiFi.setBandMode(WIFI_BAND_MODE_2G_ONLY);
         ESP_LOGV(TAG, "WiFi STA begin");
     } else {
         ESP_LOGE(TAG, "Invalid WiFi Status");
@@ -278,12 +289,15 @@ etl::array<uint8_t, 6> AdapterWLAN_A::getMACAddress() const {
     etl::array<uint8_t, 6> MACAddress = {0};
     std::copy(std::begin(MACAddressTemp), std::end(MACAddressTemp),
               MACAddress.begin());
-    ESP_LOGD(TAG, "MACAddr[0]: ", MACAddress.at(0));
-    ESP_LOGD(TAG, "MACAddr[1]: ", MACAddress.at(1));
-    ESP_LOGD(TAG, "MACAddr[2]: ", MACAddress.at(2));
-    ESP_LOGD(TAG, "MACAddr[3]: ", MACAddress.at(3));
-    ESP_LOGD(TAG, "MACAddr[4]: ", MACAddress.at(4));
-    ESP_LOGD(TAG, "MACAddr[5]: ", MACAddress.at(5));
+    // ESP_LOGV(TAG, "MACAddr[0]: %d", MACAddress.at(0));
+    // ESP_LOGV(TAG, "MACAddr[1]: %d", MACAddress.at(1));
+    // ESP_LOGV(TAG, "MACAddr[2]: %d", MACAddress.at(2));
+    // ESP_LOGV(TAG, "MACAddr[3]: %d", MACAddress.at(3));
+    // ESP_LOGV(TAG, "MACAddr[4]: %d", MACAddress.at(4));
+    // ESP_LOGV(TAG, "MACAddr[5]: %d", MACAddress.at(5));
+    ESP_LOGV(TAG, "MACAddr: %d%d:%d%d:%d%d:", MACAddress.at(0),
+             MACAddress.at(1), MACAddress.at(2), MACAddress.at(3),
+             MACAddress.at(4), MACAddress.at(5));
 
     // Format and log the MAC address
     ESP_LOGV(TAG, "Formatting MACAddr");
@@ -292,72 +306,86 @@ etl::array<uint8_t, 6> AdapterWLAN_A::getMACAddress() const {
         "MACADDR: ";
     ESP_LOGV(TAG, "Created MACAddr string");
     // delay(1500);
-    // MACAddressFormatted.append(NetAdapter_A::formatMACAddress(MACAddress)); // todo
+    // MACAddressFormatted.append(NetAdapter_A::formatMACAddress(MACAddress));
+    // // todo
     ESP_LOGV(TAG, "Passing formatted MACAddr w/ c_str():");
     // delay(1500);
-    ESP_LOGI(TAG, "MACAddrFormatted: %s", MACAddressFormatted.c_str());
+    ESP_LOGD(TAG, "MACAddrFormatted: %s", MACAddressFormatted.c_str());
     // ESP_LOGV(TAG, "Passed formatted MACAddr w/
     // data():"); ESP_LOGI(TAG,
     // MACAddressFormatted.data()); // still does not work as expected
-    ESP_LOGD(TAG, "MACAddrFormatted[0]: ", MACAddressFormatted.at(0));
-    ESP_LOGD(TAG, "MACAddrFormatted[1]: ", MACAddressFormatted.at(1));
-    ESP_LOGD(TAG, "MACAddrFormatted[2]: ", MACAddressFormatted.at(2));
-    ESP_LOGD(TAG, "MACAddrFormatted[3]: ", MACAddressFormatted.at(3));
-    ESP_LOGD(TAG, "MACAddrFormatted[4]: ", MACAddressFormatted.at(4));
-    ESP_LOGD(TAG, "MACAddrFormatted[5]: ", MACAddressFormatted.at(5));
-    ESP_LOGD(TAG, "MACAddrFormatted[6]: ", MACAddressFormatted.at(6));
-    ESP_LOGD(TAG, "MACAddrFormatted[7]: ", MACAddressFormatted.at(7));
-    ESP_LOGD(TAG, "MACAddrFormatted[8]: ", MACAddressFormatted.at(8));
-    ESP_LOGD(TAG, "MACAddrFormatted[9]: ", MACAddressFormatted.at(9));
-    ESP_LOGD(TAG, "MACAddrFormatted[10]: ", MACAddressFormatted.at(10));
-    ESP_LOGD(TAG, "MACAddrFormatted[11]: ", MACAddressFormatted.at(11));
-    ESP_LOGD(TAG, "MACAddrFormatted[12]: ", MACAddressFormatted.at(12));
-    ESP_LOGD(TAG, "MACAddrFormatted[13]: ", MACAddressFormatted.at(13));
-    ESP_LOGD(TAG, "MACAddrFormatted[14]: ", MACAddressFormatted.at(14));
-    ESP_LOGD(TAG, "MACAddrFormatted[15]: ", MACAddressFormatted.at(15));
-    ESP_LOGD(TAG, "MACAddrFormatted[16]: ", MACAddressFormatted.at(16));
-    ESP_LOGD(TAG, "MACAddrFormatted[17]: ", MACAddressFormatted.at(17));
-    ESP_LOGD(TAG, "MACAddrFormatted[18]: ", MACAddressFormatted.at(18));
-    ESP_LOGD(TAG, "MACAddrFormatted[19]: ", MACAddressFormatted.at(19));
-    ESP_LOGD(TAG, "MACAddrFormatted[20]: ", MACAddressFormatted.at(20));
-    ESP_LOGD(TAG, "MACAddrFormatted[21]: ", MACAddressFormatted.at(21));
-    ESP_LOGD(TAG, "MACAddrFormatted[22]: ", MACAddressFormatted.at(22));
-    ESP_LOGD(TAG, "MACAddrFormatted[23]: ", MACAddressFormatted.at(23));
-    ESP_LOGD(TAG, "MACAddrFormatted[24]: ", MACAddressFormatted.at(24));
-    ESP_LOGD(TAG, "MACAddrFormatted[25]: ", MACAddressFormatted.at(25));
-    ESP_LOGD(TAG, "MACAddrFormatted[26]: ", MACAddressFormatted.at(26));
+    // ESP_LOGV(TAG, "MACAddrFormatted[0]: %c", MACAddressFormatted.at(0));
+    // ESP_LOGV(TAG, "MACAddrFormatted[1]: %c", MACAddressFormatted.at(1));
+    // ESP_LOGV(TAG, "MACAddrFormatted[2]: %c", MACAddressFormatted.at(2));
+    // ESP_LOGV(TAG, "MACAddrFormatted[3]: %c", MACAddressFormatted.at(3));
+    // ESP_LOGV(TAG, "MACAddrFormatted[4]: %c", MACAddressFormatted.at(4));
+    // ESP_LOGV(TAG, "MACAddrFormatted[5]: %c", MACAddressFormatted.at(5));
+    // ESP_LOGV(TAG, "MACAddrFormatted[6]: %c", MACAddressFormatted.at(6));
+    // ESP_LOGV(TAG, "MACAddrFormatted[7]: %c", MACAddressFormatted.at(7));
+    // ESP_LOGV(TAG, "MACAddrFormatted[8]: %c", MACAddressFormatted.at(8));
+    // ESP_LOGV(TAG, "MACAddrFormatted[9]: %c", MACAddressFormatted.at(9));
+    // ESP_LOGV(TAG, "MACAddrFormatted[10]: %c", MACAddressFormatted.at(10));
+    // ESP_LOGV(TAG, "MACAddrFormatted[11]: %c", MACAddressFormatted.at(11));
+    // ESP_LOGV(TAG, "MACAddrFormatted[12]: %c", MACAddressFormatted.at(12));
+    // ESP_LOGV(TAG, "MACAddrFormatted[13]: %c", MACAddressFormatted.at(13));
+    // ESP_LOGV(TAG, "MACAddrFormatted[14]: %c", MACAddressFormatted.at(14));
+    // ESP_LOGV(TAG, "MACAddrFormatted[15]: %c", MACAddressFormatted.at(15));
+    // ESP_LOGV(TAG, "MACAddrFormatted[16]: %c", MACAddressFormatted.at(16));
+    // ESP_LOGV(TAG, "MACAddrFormatted[17]: %c", MACAddressFormatted.at(17));
+    // ESP_LOGV(TAG, "MACAddrFormatted[18]: %c", MACAddressFormatted.at(18));
+    // ESP_LOGV(TAG, "MACAddrFormatted[19]: %c", MACAddressFormatted.at(19));
+    // ESP_LOGV(TAG, "MACAddrFormatted[20]: %c", MACAddressFormatted.at(20));
+    // ESP_LOGV(TAG, "MACAddrFormatted[21]: %c", MACAddressFormatted.at(21));
+    // ESP_LOGV(TAG, "MACAddrFormatted[22]: %c", MACAddressFormatted.at(22));
+    // ESP_LOGV(TAG, "MACAddrFormatted[23]: %c", MACAddressFormatted.at(23));
+    // ESP_LOGV(TAG, "MACAddrFormatted[24]: %c", MACAddressFormatted.at(24));
+    // ESP_LOGV(TAG, "MACAddrFormatted[25]: %c", MACAddressFormatted.at(25));
+    // ESP_LOGV(TAG, "MACAddrFormatted[26]: %c", MACAddressFormatted.at(26));
 
     // Return the numerical MAC address
     ESP_LOGV(TAG, "ret");
     return MACAddress;
 }
 
-bool AdapterWLAN_A::begin() {
-    ESP_LOGV(TAG, "init");
-    return AdapterWLAN_A::begin(WTbNetConfig::WIFI_DEFAULT_CH);
-}
+// bool AdapterWLAN::begin() {
+//     return AdapterWLAN::begin(WTbNetConfig::WIFI_DEFAULT_CH);
+// }
 
-bool AdapterWLAN_A::begin(const uint8_t wiFiChannel) {
+bool AdapterWLAN::begin(const uint8_t wiFiChannel) {
+    // esp_wifi_set_band_mode(WIFI_BAND_MODE_2G_ONLY);
+
     // Set device as a Wi-Fi Station
-    bool result0 = WiFi.mode(WIFI_STA);
-    int result1 = WiFi.setChannel(wiFiChannel);
-
-    bool resultFinal = result0 && (result1 == 0);
-    if (resultFinal) {
-        // ESP_LOGI(TAG, "Started WiFi on ch. ",
-        // //todo
-        //              wiFiChannel);
-    } else {
-        // logger->error(FullyQualifiedComponentID, "Failed to start WiFI on ch.
-        // ", //todo
-        //               wiFiChannel);
+    if (!WiFi.mode(WIFI_STA)) {
+        ESP_LOGE(TAG, "Failed to set WiFi mode");
+        return false;
     }
-    return resultFinal;
+
+    if (!WiFi.setBandMode(WIFI_BAND_MODE_2G_ONLY)) {
+        ESP_LOGE(TAG, "Failed to set WiFi band mode");
+        return false;
+    }
+
+    // WiFi.STA.begin();
+
+    if (WiFi.STA.bandwidth(WIFI_BW_HT20)) {
+        ESP_LOGE(TAG, "Failed to set WiFi bandwidth");
+        return false;
+    }
+
+    if (WiFi.setChannel(wiFiChannel) != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to set WiFi channel");
+        return false;
+    }
+    ESP_LOGD(TAG, "WiFI init on ch. %d", wiFiChannel);
+
+    // todo: esp_wifi_set_config()
+
+    return true;
 }
 
-bool AdapterWLAN_A::setMaxTxPower(TxDbmToESP txPower) {
+bool AdapterWLAN::setMaxTxPower(TxDbmToESP txPower) {
     // Set the maximum transmit power
-    if (esp_wifi_set_max_tx_power((uint8_t)txPower) != ESP_OK) {
+    if (esp_wifi_set_max_tx_power((int8_t)txPower) != ESP_OK) {
         ESP_LOGE(TAG, "Failed to set max tx power");
         return false;
     }
@@ -373,7 +401,7 @@ bool AdapterWLAN_A::setMaxTxPower(TxDbmToESP txPower) {
     return true;
 }
 
-int_fast8_t AdapterWLAN_A::getMaxTxPower_Raw() {
+int_fast8_t AdapterWLAN::getMaxTxPower_Raw() {
     int8_t txPower = 0;
 
     // Check and test for failure
@@ -391,27 +419,27 @@ int_fast8_t AdapterWLAN_A::getMaxTxPower_Raw() {
 
 // MARK: Network Overrides
 
-bool AdapterWLAN_A::send(
+bool AdapterWLAN::send(
     const etl::array<uint8_t, 6> destMAC_addr,
     const etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> &data,
     const uint_fast8_t bytesValid, const bool verifyReceipt) {
-    ESP_LOGE(TAG, "AdapterWLAN_A::send not implemented");
+    ESP_LOGE(TAG, "AdapterWLAN::send not implemented");
     return false;
 }
 
-bool AdapterWLAN_A::sendAll(
+bool AdapterWLAN::sendAll(
     const etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> &data,
     const uint_fast8_t bytesValid) {
-    ESP_LOGE(TAG, "AdapterWLAN_A::sendAll not implemented");
+    ESP_LOGE(TAG, "AdapterWLAN::sendAll not implemented");
     return false;
 }
 
 // MARK: Private
 // todo: Sometimes this gets printed in terms of ESP units instead of dbm
-int_fast8_t AdapterWLAN_A::getMaxTxPower_dBm() {
+int_fast8_t AdapterWLAN::getMaxTxPower_dBm() {
     const int_fast8_t txPower = getMaxTxPower_Raw();
     ESP_LOGD(TAG, "Tx power (dBm): ", txPower);
     return (int_fast8_t)(txPower * 0.25);
 }
 
-// End of file AdapterWLAN_A.cpp
+// End of file AdapterWLAN.cpp
