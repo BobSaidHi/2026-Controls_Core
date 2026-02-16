@@ -147,9 +147,10 @@ uint8_t AdapterWLAN::identifyOptimalChannel() {
             ch11RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_1_WEIGHT);
         } else if (WiFi.channel(i) == 11) { // Ch. 11
             ch11RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_0_WEIGHT);
-        } else { // Should never run in the North America
+        } else if (WiFi.channel(i) <=
+                   14) { // Should never run in the North America
             ESP_LOGE(TAG, "Detected Illegal WiFi Ch.: %d", WiFi.channel(i));
-        }
+        } // Else: Ignore 5Ghz channels
         ESP_LOGD(TAG, "Subtotals: C1: %d, C6: %d, C11: %d", ch1RSSITotal,
                  ch6RSSITotal, ch11RSSITotal);
     }
