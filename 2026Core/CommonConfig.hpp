@@ -78,8 +78,8 @@ namespace CONSTS {
  */
 namespace WTbNetConfig {
     // Device Configuration
-    constexpr etl::array<uint8_t, 6> LOAD_MAC = {0xFF, 0xFF, 0xFF, 0xFF,
-                                                 0xFF}; // todo
+    constexpr etl::array<uint8_t, 6> LOAD_MAC = {0xFF, 0xFF, 0xFF,
+                                                 0xFF, 0xFF, 0xFF}; // todo
     constexpr etl::array<uint8_t, 6> NACELLE_MAC = {0x30, 0xED, 0xA0,
                                                     0xE0, 0x6B, 0x78}; // todo
 

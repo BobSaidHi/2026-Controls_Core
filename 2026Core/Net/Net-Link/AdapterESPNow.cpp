@@ -129,11 +129,14 @@ bool AdapterESPNow::send(
     const etl::array<uint8_t, 6> destMAC_addr,
     const etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> &data,
     const uint_fast8_t bytesValid, const bool verifyReceipt) {
+    ESP_LOGV(TAG, "Sending %d bytes to %s", bytesValid,
+             AdapterWLAN::formatMACAddress(destMAC_addr).c_str());
 
     esp_err_t result =
         esp_now_send(destMAC_addr.data(), data.data(), bytesValid);
 
     if (!verifyReceipt) {
+        ESP_LOGV(TAG, "Skipping Verification");
         return true;
     }
 
