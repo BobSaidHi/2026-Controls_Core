@@ -179,69 +179,42 @@ uint8_t AdapterWLAN::identifyOptimalChannel() {
  * @see https://randomnerdtutorials.com/esp32-useful-wi-fi-functions-arduino/#4
  * @see https://www.geeksforgeeks.org/cpp-20-std-format/
  * @see https://stackoverflow.com/a/69326849
+ * @see https://docs.arduino.cc/tutorials/nano-esp32/esp-now/
+ * @see
+ * https://randomnerdtutorials.com/get-change-esp32-esp8266-mac-address-arduino/
  */
 etl::array<uint8_t, 6> AdapterWLAN::getMACAddress() const {
     ESP_LOGV(TAG, "func called");
     // delay(1000);
 
     // Save WiFi configuration
-    bool leaveWifiOn = false;
-    wl_status_t WiFIStatus = WiFi.status();
+    // const wl_status_t prevWiFIStatus = WiFi.status();
+    const wifi_mode_t orginalWiFiMode = WiFi.getMode();
 
-    if (WiFIStatus == WL_CONNECTED) {
-        ESP_LOGD(TAG, "WiFi already connected");
-        leaveWifiOn = true;
-    } else if (WiFIStatus == WL_NO_SSID_AVAIL) {
-        ESP_LOGD(TAG, "No SSID Avail");
-        leaveWifiOn = true;
-    } else if (WiFIStatus == WL_SCAN_COMPLETED) {
-        ESP_LOGD(TAG, "WiFi Scan Completed");
-        leaveWifiOn = true;
-    } else if (WiFIStatus == WL_IDLE_STATUS) {
-        ESP_LOGW(TAG, "WiFi Idle");
-        leaveWifiOn = true;
-    } else if (WiFIStatus == WL_STOPPED) {
-        ESP_LOGW(TAG, "Restarting WiFi1");
-        leaveWifiOn = false;
+    // if (wiFiMode == WIFI_MODE_NULL) {
+    //     ESP_LOGD(TAG, "WiFi not initialized");
+    // } else if (wiFiMode == WIFI_MODE_STA) {
+    //     ESP_LOGD(TAG, "WiFi in STA mode");
+    // } else if (wiFiMode == WIFI_MODE_AP) {
+    //     ESP_LOGD(TAG, "WiFi in AP mode");
+    // } else if (wiFiMode == WIFI_MODE_APSTA) {
+    //     ESP_LOGD(TAG, "WiFi in AP+STA mode");
+    // } else {
+    //     ESP_LOGE(TAG, "Invalid WiFi Mode");
+    //     return {0};
+    // }
 
-        // Configure WiFi
+    // Configure WiFi
+    if (!(orginalWiFiMode == WIFI_MODE_STA ||
+          orginalWiFiMode == WIFI_MODE_APSTA)) {
+        ESP_LOGV(TAG, "Setting WiFi to STA mode");
         WiFi.mode(WIFI_STA);
-        WiFi.STA.begin();
-        WiFi.STA.bandwidth(WIFI_BW_HT20);
-        WiFi.setBandMode(WIFI_BAND_MODE_2G_ONLY);
-        // WiFi.setTxPower();
-    } else if (WiFIStatus == WL_CONNECT_FAILED) {
-        ESP_LOGW(TAG, "Restarting WiFi2");
-        leaveWifiOn = false;
-
-        // Configure WiFi
-        WiFi.mode(WIFI_STA);
-        WiFi.STA.begin();
-        WiFi.STA.bandwidth(WIFI_BW_HT20);
-        WiFi.setBandMode(WIFI_BAND_MODE_2G_ONLY);
-    } else if (WiFIStatus == WL_CONNECTION_LOST) {
-        ESP_LOGW(TAG, "Restarting WiFi3");
-        leaveWifiOn = false;
-
-        // Configure WiFi
-        WiFi.mode(WIFI_STA);
-        WiFi.STA.begin();
-        WiFi.STA.bandwidth(WIFI_BW_HT20);
-        WiFi.setBandMode(WIFI_BAND_MODE_2G_ONLY);
-    } else if (WiFIStatus == WL_DISCONNECTED) {
-        leaveWifiOn = false;
-
-        ESP_LOGW(TAG, "Starting WiFi4");
-        // Configure WiFi
-        WiFi.mode(WIFI_STA);
-        WiFi.STA.begin();
-        WiFi.STA.bandwidth(WIFI_BW_HT20);
-        WiFi.setBandMode(WIFI_BAND_MODE_2G_ONLY);
-        ESP_LOGV(TAG, "WiFi STA begin");
     } else {
-        ESP_LOGE(TAG, "Invalid WiFi Status");
-        return {0};
+        ESP_LOGV(TAG, "WiFi already in STA mode");
     }
+
+    WiFi.setBandMode(WIFI_BAND_MODE_2G_ONLY);
+
     ESP_LOGV(TAG, "WiFi Status Check Done");
     // delay(1000);
 
@@ -253,9 +226,9 @@ etl::array<uint8_t, 6> AdapterWLAN::getMACAddress() const {
     // delay(1000);
 
     // Cleanup WiFi Config Changes
-    if (!leaveWifiOn) {
-        ESP_LOGV(TAG, "WiFi dis");
-        WiFi.disconnect();
+    if (orginalWiFiMode != WiFi.getMode()) {
+        ESP_LOGV(TAG, "Resetting WifI Mode to Previous");
+        WiFi.mode(orginalWiFiMode);
     }
 
     // Check if the operation was successful
@@ -290,12 +263,6 @@ etl::array<uint8_t, 6> AdapterWLAN::getMACAddress() const {
     etl::array<uint8_t, 6> MACAddress = {0};
     std::copy(std::begin(MACAddressTemp), std::end(MACAddressTemp),
               MACAddress.begin());
-    // ESP_LOGV(TAG, "MACAddr[0]: %d", MACAddress.at(0));
-    // ESP_LOGV(TAG, "MACAddr[1]: %d", MACAddress.at(1));
-    // ESP_LOGV(TAG, "MACAddr[2]: %d", MACAddress.at(2));
-    // ESP_LOGV(TAG, "MACAddr[3]: %d", MACAddress.at(3));
-    // ESP_LOGV(TAG, "MACAddr[4]: %d", MACAddress.at(4));
-    // ESP_LOGV(TAG, "MACAddr[5]: %d", MACAddress.at(5));
     ESP_LOGV(TAG, "MACAddr: %d%d:%d%d:%d%d:", MACAddress.at(0),
              MACAddress.at(1), MACAddress.at(2), MACAddress.at(3),
              MACAddress.at(4), MACAddress.at(5));
@@ -315,33 +282,6 @@ etl::array<uint8_t, 6> AdapterWLAN::getMACAddress() const {
     // ESP_LOGV(TAG, "Passed formatted MACAddr w/
     // data():"); ESP_LOGI(TAG,
     // MACAddressFormatted.data()); // still does not work as expected
-    // ESP_LOGV(TAG, "MACAddrFormatted[0]: %c", MACAddressFormatted.at(0));
-    // ESP_LOGV(TAG, "MACAddrFormatted[1]: %c", MACAddressFormatted.at(1));
-    // ESP_LOGV(TAG, "MACAddrFormatted[2]: %c", MACAddressFormatted.at(2));
-    // ESP_LOGV(TAG, "MACAddrFormatted[3]: %c", MACAddressFormatted.at(3));
-    // ESP_LOGV(TAG, "MACAddrFormatted[4]: %c", MACAddressFormatted.at(4));
-    // ESP_LOGV(TAG, "MACAddrFormatted[5]: %c", MACAddressFormatted.at(5));
-    // ESP_LOGV(TAG, "MACAddrFormatted[6]: %c", MACAddressFormatted.at(6));
-    // ESP_LOGV(TAG, "MACAddrFormatted[7]: %c", MACAddressFormatted.at(7));
-    // ESP_LOGV(TAG, "MACAddrFormatted[8]: %c", MACAddressFormatted.at(8));
-    // ESP_LOGV(TAG, "MACAddrFormatted[9]: %c", MACAddressFormatted.at(9));
-    // ESP_LOGV(TAG, "MACAddrFormatted[10]: %c", MACAddressFormatted.at(10));
-    // ESP_LOGV(TAG, "MACAddrFormatted[11]: %c", MACAddressFormatted.at(11));
-    // ESP_LOGV(TAG, "MACAddrFormatted[12]: %c", MACAddressFormatted.at(12));
-    // ESP_LOGV(TAG, "MACAddrFormatted[13]: %c", MACAddressFormatted.at(13));
-    // ESP_LOGV(TAG, "MACAddrFormatted[14]: %c", MACAddressFormatted.at(14));
-    // ESP_LOGV(TAG, "MACAddrFormatted[15]: %c", MACAddressFormatted.at(15));
-    // ESP_LOGV(TAG, "MACAddrFormatted[16]: %c", MACAddressFormatted.at(16));
-    // ESP_LOGV(TAG, "MACAddrFormatted[17]: %c", MACAddressFormatted.at(17));
-    // ESP_LOGV(TAG, "MACAddrFormatted[18]: %c", MACAddressFormatted.at(18));
-    // ESP_LOGV(TAG, "MACAddrFormatted[19]: %c", MACAddressFormatted.at(19));
-    // ESP_LOGV(TAG, "MACAddrFormatted[20]: %c", MACAddressFormatted.at(20));
-    // ESP_LOGV(TAG, "MACAddrFormatted[21]: %c", MACAddressFormatted.at(21));
-    // ESP_LOGV(TAG, "MACAddrFormatted[22]: %c", MACAddressFormatted.at(22));
-    // ESP_LOGV(TAG, "MACAddrFormatted[23]: %c", MACAddressFormatted.at(23));
-    // ESP_LOGV(TAG, "MACAddrFormatted[24]: %c", MACAddressFormatted.at(24));
-    // ESP_LOGV(TAG, "MACAddrFormatted[25]: %c", MACAddressFormatted.at(25));
-    // ESP_LOGV(TAG, "MACAddrFormatted[26]: %c", MACAddressFormatted.at(26));
 
     // Return the numerical MAC address
     ESP_LOGV(TAG, "ret");
@@ -352,7 +292,8 @@ etl::array<uint8_t, 6> AdapterWLAN::getMACAddress() const {
 //     return AdapterWLAN::begin(WTbNetConfig::WIFI_DEFAULT_CH);
 // }
 
-bool AdapterWLAN::begin(const uint8_t wiFiChannel) {
+bool AdapterWLAN::begin(
+    const uint8_t wiFiChannel) { // todo: configures but does not start WiFi ATM
     // esp_wifi_set_band_mode(WIFI_BAND_MODE_2G_ONLY);
 
     // Set device as a Wi-Fi Station
@@ -366,8 +307,6 @@ bool AdapterWLAN::begin(const uint8_t wiFiChannel) {
         return false;
     }
 
-    // WiFi.STA.begin();
-
     if (WiFi.STA.bandwidth(WIFI_BW_HT20)) {
         ESP_LOGE(TAG, "Failed to set WiFi bandwidth");
         return false;
@@ -377,6 +316,15 @@ bool AdapterWLAN::begin(const uint8_t wiFiChannel) {
         ESP_LOGE(TAG, "Failed to set WiFi channel");
         return false;
     }
+
+    // WiFi.setTxPower(); // todo
+
+    // WiFi.begin(); // todo?
+    // if (WiFi.STA.begin() != WL_SUCCESS) {
+    //     ESP_LOGE(TAG, "Failed to start WiFi in STA mode");
+    //     return false;
+    // }
+
     ESP_LOGD(TAG, "WiFI init on ch. %d", wiFiChannel);
 
     // todo: esp_wifi_set_config()
