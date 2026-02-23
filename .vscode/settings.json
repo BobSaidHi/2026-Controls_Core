@@ -26,6 +26,7 @@
         "cstdlib",
         "cstring",
         "cwchar",
+        "Devboard",
         "Doxyfile",
         "doxygen",
         "Doxygen",
