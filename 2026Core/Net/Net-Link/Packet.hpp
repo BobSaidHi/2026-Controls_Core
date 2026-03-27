@@ -54,7 +54,7 @@ class Packet {
         HEADER_VERSION << HANDLE_ID_LEN_BITS}; // Data storage buffer
     // uint8_t ABSLengthUsed = 1; // Length of valid data in the data array in
     // bytes, including the header
-    uint8_t lengthValid = 0; // Length of valid data in the data array in bytes
+    uint_fast8_t lengthValid = 0; // Length of valid data in the data array in bytes
 
   public:
     /**

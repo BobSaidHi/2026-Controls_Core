@@ -74,7 +74,7 @@ class NetAdapter_A {
      * @param packet to send
      * @param verifyReceipt whether to verify the data was received
      */
-    bool send(const etl::array<uint8_t, 6> destMAC_addr, const Packet packet,
+    bool send(const etl::array<uint8_t, 6> destMAC_addr, const Packet &packet,
               const bool verifyReceipt);
 
     /**
@@ -92,5 +92,5 @@ class NetAdapter_A {
      *
      * @param packet to send
      */
-    bool sendAll(const Packet packet);
+    bool sendAll(const Packet &packet);
 };

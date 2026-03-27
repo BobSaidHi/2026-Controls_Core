@@ -121,12 +121,12 @@ uint32_t NetAdapter_A::testThroughput(uint_fast8_t maxTime,
 }
 
 bool NetAdapter_A::send(const etl::array<uint8_t, 6> destMAC_addr,
-                        const Packet packet, const bool verifyReceipt) {
+                        const Packet &packet, const bool verifyReceipt) {
     ESP_LOGV(TAG, "send");
     return this->send(destMAC_addr, packet.getRawPacket(),
                       packet.getLengthValid(), verifyReceipt);
 }
 
-bool NetAdapter_A::sendAll(const Packet packet) {
+bool NetAdapter_A::sendAll(const Packet &packet) {
     return this->sendAll(packet.getRawPacket(), packet.getLengthValid());
 }

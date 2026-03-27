@@ -116,10 +116,11 @@ AdapterUHCI::txDoneCallback(uhci_controller_handle_t uhci_ctrl,
  * @see
  * https://arduino.stackexchange.com/questions/22212/using-millis-and-micros-inside-an-interrupt-routine
  * @see https://www.man7.org/linux/man-pages/man3/memcpy.3.html
+ * @SuppressWarnings("cpp:S5008") // Does not work
  */
 IRAM_ATTR bool AdapterUHCI::rxEventCallback(uhci_controller_handle_t uhci_ctrl,
                                             const uhci_rx_event_data_t *edata,
-                                            void *user_ctx) {
+                                            void *user_ctx) { // NOSONAR
     /**
      * @brief Get/cast user context
      * @details parameter `user_ctx` is parsed by the third parameter of

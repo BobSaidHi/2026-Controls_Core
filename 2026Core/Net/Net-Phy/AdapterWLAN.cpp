@@ -221,8 +221,9 @@ etl::array<uint8_t, 6> AdapterWLAN::getMACAddress() const {
 
     // Create a temporary c style array to hold the MAC address
     // NOSONAR
-    uint8_t MACAddressTemp[6] = {0};
-    esp_err_t opStatus = esp_wifi_get_mac(WIFI_IF_STA, MACAddressTemp);
+    // uint8_t MACAddressTemp[6] = {0};
+    etl::array<uint8_t, 6> MACAddress = {0};
+    esp_err_t opStatus = esp_wifi_get_mac(WIFI_IF_STA, MACAddress.data());
     ESP_LOGD(TAG, "Queried MACAddr");
     // delay(1000);
 
@@ -261,10 +262,10 @@ etl::array<uint8_t, 6> AdapterWLAN::getMACAddress() const {
     // todo: verify performance
 
     // Create an array to return the MAC address
-    etl::array<uint8_t, 6> MACAddress = {0};
-    std::copy(std::begin(MACAddressTemp), std::end(MACAddressTemp),
-              MACAddress.begin());
-    // std::ranges::copy(MACAddressTemp, MACAddress.begin()); //todo
+    // etl::array<uint8_t, 6> MACAddress = {0};
+    // std::copy(std::begin(MACAddressTemp), std::end(MACAddressTemp),
+    //           MACAddress.begin());
+    // std::ranges::copy(MACAddressTemp, MACAddress.end());
     ESP_LOGV(TAG, "MACAddr: %d%d:%d%d:%d%d:", MACAddress.at(0),
              MACAddress.at(1), MACAddress.at(2), MACAddress.at(3),
              MACAddress.at(4), MACAddress.at(5));
