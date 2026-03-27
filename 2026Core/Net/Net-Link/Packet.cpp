@@ -7,7 +7,7 @@
 
 /* MARK: Standard Functions */
 
-Packet::Packet() {};
+Packet::Packet() = default;;
 
 Packet::Packet(etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> &bin,
                const uint_fast8_t dataLength) {
@@ -61,7 +61,7 @@ void Packet::setContents(
         handlingCode = handlingCode && HANDLE_ID_NET_MASK;
     }*/
     // Set the header
-    dataBuffer[0] = (HEADER_VERSION << HANDLE_ID_LEN_BITS) + handlingCode;
+    dataBuffer[0] = (uint8_t)(HEADER_VERSION << HANDLE_ID_LEN_BITS) + handlingCode; // todo check var types
 
     // Validate the data length
     if (dataLength > WTbNetConfig::MAX_PACKET_DATA_LENGTH) {

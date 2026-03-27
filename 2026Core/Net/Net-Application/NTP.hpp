@@ -34,8 +34,8 @@ class SyncedClock {
      * @brief Construct a new Synced Clock object
      * @param netAdapter the network adapter to use for time sync
      */
-    SyncedClock(NetAdapter_A &netAdapter);
-    ~SyncedClock();
+    explicit SyncedClock(NetAdapter_A &netAdapter);
+    ~SyncedClock() = default;
 
     /**
      * @brief Initialize time synchronization

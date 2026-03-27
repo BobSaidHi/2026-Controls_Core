@@ -54,16 +54,16 @@ class AdapterUHCI : public NetAdapter_A {
      * @see
      * https://stackoverflow.com/questions/612328/difference-between-struct-and-typedef-struct-in-c
      */
-    typedef struct {
+    using Pins = struct {
         int tx;
         int rx;
-    } Pins;
+    };
 
     /**
      * @brief Construct a new UHCI network adapter object
      * @param pins A struct/pair of integers representing the TX and RX pins
      */
-    AdapterUHCI(const Pins pins);
+    explicit AdapterUHCI(const Pins pins);
     ~AdapterUHCI() = default;
 
     /**
@@ -148,10 +148,10 @@ class AdapterUHCI : public NetAdapter_A {
      * @see
      * https://github.com/espressif/esp-idf/blob/v5.5.1/examples/peripherals/uart/uart_dma_ota/main/uart_dma_ota_example_main.c
      */
-    typedef enum {
+    using uhci_event_t = enum {
         UHCI_EVT_PARTIAL_DATA,
         UHCI_EVT_EOF,
-    } uhci_event_t;
+    };
 
     /**
      * @see https://stackoverflow.com/a/49915536
@@ -193,25 +193,25 @@ class AdapterUHCI : public NetAdapter_A {
         "Atomic operations on int are only sometimes lock-free on this platform."
 #endif
 
-    typedef struct {
+    using NetStats_T = struct {
         std::atomic<uint_fast32_t> bits = 0;
         std::atomic<uint_fast32_t> packets = 0;
         std::atomic<uint_fast32_t> dataRate_bpuS = 0;
         uint_fast32_t lastStatUpdate_uS = 0;
-    } NetStats_T;
+    };
 
-    typedef struct {
+    using RxContext_t = struct {
         QueueHandle_t uhci_queue = uHCIRxQueue;
         size_t receive_size = 0;
         // NetStats_T stats;
         uint8_t *p_receive_data = nullptr;
-    } RxContext_t;
+    };
 
-    typedef struct {
+    using UHCI_Context_t = struct {
         RxContext_t rx;
         NetStats_T rxStats;
         NetStats_T txStats;
-    } UHCI_Context_t;
+    };
 
     // Working
     uhci_controller_handle_t uhci_ctrl;

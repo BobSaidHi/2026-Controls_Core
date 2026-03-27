@@ -22,7 +22,7 @@
  * required for a Network Adapter
  */
 class NetAdapter_A {
-  protected:
+  // protected:
     /* MARK: Protected Member Variables */
 
     // etl::array<uint8_t, 6> MACAddress;

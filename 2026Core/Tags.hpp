@@ -10,7 +10,7 @@ namespace Tags {
         RESERVED = 0x00,
         NET_APP_NTP = 0x10,
         NET_LINK_ESPNOW = 0x20,
-        NET_LINK_UCHI = 0x20,
+        NET_LINK_UHCI = 0x20,
         NET_LINK_PACKET = 0x20,
         NET_PHY_WLAN = 0x30,
         NET_ADAPTER = 0x40,
@@ -32,8 +32,8 @@ namespace Tags {
             return "NET_APP_NTP";
         } else if (tag == Tags::NET_LINK_ESPNOW) {
             return "NET_LINK_ESPNOW";
-        } else if (tag == Tags::NET_LINK_UCHI) {
-            return "NET_LINK_UCHI";
+        } else if (tag == Tags::NET_LINK_UHCI) {
+            return "NET_LINK_UHCI";
         } else if (tag == Tags::NET_LINK_PACKET) {
             return "NET_LINK_PACKET";
         } else if (tag == Tags::NET_PHY_WLAN) {

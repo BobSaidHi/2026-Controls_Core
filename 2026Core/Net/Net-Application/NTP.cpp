@@ -20,15 +20,13 @@
 
 SyncedClock::SyncedClock(NetAdapter_A &netAdapter) : netAdapter(netAdapter) {}
 
-SyncedClock::~SyncedClock() {}
-
 bool SyncedClock::initTimeSync(const etl::array<uint8_t, 6> upstreamMAC) {
     // Get time data
     timeSyncInit_micros = micros();
     ESP_LOGV(TAG, "Time sync init at %lu micros", timeSyncInit_micros);
 
     // Convert to byte array
-    const uint8_t *timeSyncInit_data =
+    const auto *timeSyncInit_data =
         reinterpret_cast<const uint8_t *>(&timeSyncInit_micros);
     etl::array<uint8_t, WTbNetConfig::MAX_PACKET_DATA_LENGTH> data = {
         timeSyncInit_data[0], timeSyncInit_data[1], timeSyncInit_data[2],
@@ -36,7 +34,7 @@ bool SyncedClock::initTimeSync(const etl::array<uint8_t, 6> upstreamMAC) {
     ESP_LOGV(TAG, "Converted time sync init to byte array");
 
     // Convert to packet
-    Packet packet = Packet(data, (uint8_t)sizeof(timeSyncInit_micros),
+    auto packet = Packet(data, (uint8_t)sizeof(timeSyncInit_micros),
                            Packet::PacketType::NTPRequest);
     ESP_LOGV(TAG, "Created packet");
 
@@ -57,7 +55,7 @@ bool SyncedClock::requestHandler(const etl::array<uint8_t, 6> upstreamMAC) {
             currentTime_data[3]};
 
         // Convert to packet
-        Packet packet = Packet(data, (uint8_t)sizeof(currentTime_micros),
+        auto packet = Packet(data, (uint8_t)sizeof(currentTime_micros),
                                Packet::PacketType::NTPRequest);
 
         return netAdapter.send(upstreamMAC, packet, true);

@@ -13,6 +13,7 @@
 #include <etl/format_spec.h>
 #include <etl/string.h>
 #include <etl/to_string.h>
+#include <utility>
 
 // MARK: Standard
 
@@ -126,8 +127,8 @@ uint8_t AdapterWLAN::identifyOptimalChannel() {
             ch1RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_3_WEIGHT);
             ch6RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_2_WEIGHT);
         } else if (WiFi.channel(i) == 5) { // Ch. 5 overlaps with ch. 1 and 6
-            ch1RSSITotal +=
-                (uint_fast16_t)(inverseRSSI * WTbNetConfig::OFFSET_4_WEIGHT);
+            ch1RSSITotal += (uint_fast16_t)((float)inverseRSSI *
+                                            WTbNetConfig::OFFSET_4_WEIGHT);
             ch6RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_1_WEIGHT);
         } else if (WiFi.channel(i) == 6) { // Ch. 6
             ch6RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_0_WEIGHT);
@@ -142,8 +143,8 @@ uint8_t AdapterWLAN::identifyOptimalChannel() {
             ch6RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_3_WEIGHT);
             ch11RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_2_WEIGHT);
         } else if (WiFi.channel(i) == 10) { // Ch. 10 overlaps with ch. 6 and 11
-            ch6RSSITotal +=
-                (uint_fast16_t)(inverseRSSI * WTbNetConfig::OFFSET_4_WEIGHT);
+            ch6RSSITotal += (uint_fast16_t)((float)inverseRSSI *
+                                            WTbNetConfig::OFFSET_4_WEIGHT);
             ch11RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_1_WEIGHT);
         } else if (WiFi.channel(i) == 11) { // Ch. 11
             ch11RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_0_WEIGHT);
@@ -189,7 +190,7 @@ etl::array<uint8_t, 6> AdapterWLAN::getMACAddress() const {
 
     // Save WiFi configuration
     // const wl_status_t prevWiFIStatus = WiFi.status();
-    const wifi_mode_t orginalWiFiMode = WiFi.getMode();
+    const wifi_mode_t originalWiFiMode = WiFi.getMode();
 
     // if (wiFiMode == WIFI_MODE_NULL) {
     //     ESP_LOGD(TAG, "WiFi not initialized");
@@ -205,8 +206,8 @@ etl::array<uint8_t, 6> AdapterWLAN::getMACAddress() const {
     // }
 
     // Configure WiFi
-    if (!(orginalWiFiMode == WIFI_MODE_STA ||
-          orginalWiFiMode == WIFI_MODE_APSTA)) {
+    if (!(originalWiFiMode == WIFI_MODE_STA ||
+          originalWiFiMode == WIFI_MODE_APSTA)) {
         ESP_LOGV(TAG, "Setting WiFi to STA mode");
         WiFi.mode(WIFI_STA);
     } else {
@@ -226,9 +227,9 @@ etl::array<uint8_t, 6> AdapterWLAN::getMACAddress() const {
     // delay(1000);
 
     // Cleanup WiFi Config Changes
-    if (orginalWiFiMode != WiFi.getMode()) {
+    if (originalWiFiMode != WiFi.getMode()) {
         ESP_LOGV(TAG, "Resetting WifI Mode to Previous");
-        WiFi.mode(orginalWiFiMode);
+        WiFi.mode(originalWiFiMode);
     }
 
     // Check if the operation was successful
@@ -263,6 +264,7 @@ etl::array<uint8_t, 6> AdapterWLAN::getMACAddress() const {
     etl::array<uint8_t, 6> MACAddress = {0};
     std::copy(std::begin(MACAddressTemp), std::end(MACAddressTemp),
               MACAddress.begin());
+    // std::ranges::copy(MACAddressTemp, MACAddress.begin()); //todo
     ESP_LOGV(TAG, "MACAddr: %d%d:%d%d:%d%d:", MACAddress.at(0),
              MACAddress.at(1), MACAddress.at(2), MACAddress.at(3),
              MACAddress.at(4), MACAddress.at(5));
@@ -334,7 +336,8 @@ bool AdapterWLAN::begin(
 
 bool AdapterWLAN::setMaxTxPower(TxDbmToESP txPower) {
     // Set the maximum transmit power
-    if (esp_wifi_set_max_tx_power((int8_t)txPower) != ESP_OK) {
+    if (esp_wifi_set_max_tx_power((int8_t)std::to_underlying(txPower)) !=
+        ESP_OK) {
         ESP_LOGE(TAG, "Failed to set max tx power");
         return false;
     }

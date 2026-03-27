@@ -193,7 +193,7 @@ class AdapterWLAN : public NetAdapter_A {
     sendAll(const etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> &data,
             const uint_fast8_t bytesValid) override;
 
-  protected:
+//   protected:
   private: // MARK: Private
     /**
      * @brief Get the maximum configured transmit power

@@ -15,7 +15,7 @@ namespace TELENT {
 
     // MARK: Objects
     ESPTelnet telnet;
-    IPAddress ip;
+    IPAddress localIP;
     EscapeCodes ansi;
 
     // TODO: WIFI - switch to net adapter
@@ -106,10 +106,10 @@ namespace TELENT {
         connectToWiFi(WIFI_SSID, WIFI_PASSWORD);
 
         if (isConnected()) {
-            ip = WiFi.localIP();
+            localIP = WiFi.localIP();
             Serial.println();
             Serial.print("- Telnet: ");
-            Serial.print(ip);
+            Serial.print(localIP);
             Serial.print(":");
             Serial.println(port);
             setupTelnet();

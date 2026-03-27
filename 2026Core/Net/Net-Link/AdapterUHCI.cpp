@@ -10,7 +10,7 @@
 #include "esp_log.h"
 #include <Arduino.h>
 
-// MARK: Constructorss
+// MARK: Constructors
 /**
  * @see
  * https://docs.espressif.com/projects/esp-idf/en/v5.5.1/esp32s3/api-reference/peripherals/uhci.html
@@ -94,11 +94,11 @@ AdapterUHCI::txDoneCallback(uhci_controller_handle_t uhci_ctrl,
      * @details parameter `user_ctx` is parsed by the third parameter of
      * function`uhci_register_event_callbacks`
      */
-    UHCI_Context_t *ctx = (UHCI_Context_t *)user_ctx;
+    auto *ctx = (UHCI_Context_t *)user_ctx;
     NetStats_T &stats = ctx->txStats;
 
     // Record performance metrics
-    uint_fast32_t currentTime_uS = (uint_fast32_t)micros();
+    auto currentTime_uS = (uint_fast32_t)micros();
 
     stats.bits += edata->sent_size;
     stats.packets++;
@@ -125,7 +125,7 @@ IRAM_ATTR bool AdapterUHCI::rxEventCallback(uhci_controller_handle_t uhci_ctrl,
      * @details parameter `user_ctx` is parsed by the third parameter of
      * function`uhci_register_event_callbacks`
      */
-    UHCI_Context_t *ctx = (UHCI_Context_t *)user_ctx;
+    auto *ctx = (UHCI_Context_t *)user_ctx;
     RxContext_t *rxCtx = &ctx->rx;
     NetStats_T &stats = ctx->rxStats;
 
@@ -140,7 +140,7 @@ IRAM_ATTR bool AdapterUHCI::rxEventCallback(uhci_controller_handle_t uhci_ctrl,
         // memcpy(ctx->p_receive_data, edata->data, edata->recv_size);
 
         // Record performance metrics
-        uint_fast32_t currentTime_uS = (uint_fast32_t)micros();
+        auto currentTime_uS = (uint_fast32_t)micros();
 
         stats.bits += edata->recv_size;
         stats.packets++;

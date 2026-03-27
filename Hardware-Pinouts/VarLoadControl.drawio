@@ -88,7 +88,7 @@
                         <mxPoint x="120" y="175" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="35" value="&lt;div&gt;Downsdies&lt;/div&gt;&lt;div&gt;- Need mutlple chips to make this or an FPGA&lt;/div&gt;&lt;div&gt;- Need to elaborate all the inputs manually&lt;/div&gt;&lt;div&gt;- Number of 1-bit signal n:1 muxes needed: n&lt;/div&gt;&lt;div&gt;- Number of 4-bit bus 2:1 muxes needed: (n/4)/...&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="shape=note;size=20;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="35" value="&lt;div&gt;Downsides&lt;/div&gt;&lt;div&gt;- Need multiple chips to make this or an FPGA&lt;/div&gt;&lt;div&gt;- Need to elaborate all the inputs manually&lt;/div&gt;&lt;div&gt;- Number of 1-bit signal n:1 muxes needed: n&lt;/div&gt;&lt;div&gt;- Number of 4-bit bus 2:1 muxes needed: (n/4)/...&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="shape=note;size=20;whiteSpace=wrap;html=1;" vertex="1" parent="1">
                     <mxGeometry x="30" y="360" width="260" height="110" as="geometry"/>
                 </mxCell>
                 <mxCell id="36" value="&lt;font color=&quot;#ffffff&quot;&gt;FPGA&lt;/font&gt;" style="shape=umlFrame;whiteSpace=wrap;html=1;width=190;height=30;boundedLbl=1;verticalAlign=middle;align=left;spacingLeft=5;fontColor=#000000;strokeColor=#000000;fillColor=#000000;gradientColor=#000000;fillStyle=solid;movable=1;resizable=1;rotatable=1;deletable=1;editable=1;connectable=1;" vertex="1" parent="1">
@@ -217,10 +217,10 @@
                         <mxPoint x="470" y="130" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="108" value="&lt;div&gt;Downsdies&lt;/div&gt;&lt;div&gt;- Cost&lt;/div&gt;&lt;div&gt;- SystemVerilog&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="shape=note;size=20;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="108" value="&lt;div&gt;Downsides&lt;/div&gt;&lt;div&gt;- Cost&lt;/div&gt;&lt;div&gt;- SystemVerilog&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="shape=note;size=20;whiteSpace=wrap;html=1;" vertex="1" parent="1">
                     <mxGeometry x="310" y="360" width="250" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="109" value="&lt;div&gt;Downsdies&lt;/div&gt;&lt;div&gt;- I2C&lt;/div&gt;" style="shape=note;size=20;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                <mxCell id="109" value="&lt;div&gt;Downsides&lt;/div&gt;&lt;div&gt;- I2C&lt;/div&gt;" style="shape=note;size=20;whiteSpace=wrap;html=1;" vertex="1" parent="1">
                     <mxGeometry x="580" y="360" width="230" height="80" as="geometry"/>
                 </mxCell>
             </root>
