@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="SB79aGflLbm6-LKJB5wv" name="Page-1">
-        <mxGraphModel dx="889" dy="596" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1080" math="0" shadow="0">
+        <mxGraphModel dx="727" dy="662" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1080" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -103,7 +103,7 @@
                 <mxCell id="71" value="&lt;div&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;&lt;u&gt;sRunLoad&lt;/u&gt;:&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;&lt;span&gt;Adjust the variable load&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;&lt;font&gt;&lt;span&gt;given&amp;nbsp;&lt;/span&gt;&lt;/font&gt;&lt;span style=&quot;background-color: transparent;&quot;&gt;&lt;font&gt;shaft RPM&lt;/font&gt;&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;&lt;span&gt;&lt;br&gt;&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(63, 63, 63); font-size: 20px; background-color: transparent;&quot;&gt;- Load -&amp;gt; On&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(63, 63, 63); font-size: 20px;&quot;&gt;- Signal Nacelle&lt;/span&gt;&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;" parent="54" vertex="1">
                     <mxGeometry x="600" y="530" width="250" height="210" as="geometry"/>
                 </mxCell>
-                <mxCell id="72" value="&lt;div&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;&lt;span&gt;~safetyTask &amp;amp;&amp;amp;&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;(PCCVoltage &amp;gt;&amp;nbsp;&lt;span&gt;6 V) &amp;amp;&amp;amp;&lt;/span&gt;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;&lt;span&gt;steadyRPM&lt;/span&gt;&lt;/font&gt;&lt;span style=&quot;color: rgb(192, 192, 192); font-size: 20px; background-color: light-dark(#ffffff, var(--ge-dark-color, #121212));&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;curved=1;fontSize=14;endSize=10;startSize=10;strokeWidth=5;" parent="54" source="70" target="71" edge="1">
+                <mxCell id="72" value="&lt;div&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;&lt;span&gt;~safetyTask &amp;amp;&amp;amp;&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;&lt;span&gt;producingPositivePower &amp;amp;&amp;amp;&lt;/span&gt;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;&lt;span&gt;steadyRPM&lt;/span&gt;&lt;/font&gt;&lt;span style=&quot;color: rgb(192, 192, 192); font-size: 20px; background-color: light-dark(#ffffff, var(--ge-dark-color, #121212));&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;curved=1;fontSize=14;endSize=10;startSize=10;strokeWidth=5;" parent="54" source="70" target="71" edge="1">
                     <mxGeometry x="-0.519" y="35" relative="1" as="geometry">
                         <mxPoint y="1" as="offset"/>
                     </mxGeometry>
@@ -158,8 +158,8 @@
                 <mxCell id="81" value="&lt;div&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;&lt;u&gt;sRST&lt;/u&gt;:&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;(Default)&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(63, 63, 63); font-size: 20px; background-color: transparent;&quot;&gt;- Load -&amp;gt; off&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;- Signal Nacelle&lt;/font&gt;&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;" parent="54" vertex="1">
                     <mxGeometry x="500" y="130" width="200" height="160" as="geometry"/>
                 </mxCell>
-                <mxCell id="82" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;&lt;span&gt;~safetyTask &amp;amp;&amp;amp;&lt;/span&gt;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;PCCVoltage &amp;gt;&lt;/font&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;curved=1;fontSize=14;endSize=10;startSize=10;strokeWidth=5;" parent="54" source="81" target="70" edge="1">
-                    <mxGeometry x="0.0835" y="60" relative="1" as="geometry">
+                <mxCell id="82" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;&lt;span&gt;~safetyTask &amp;amp;&amp;amp;&lt;/span&gt;&lt;/font&gt;&lt;div&gt;&lt;div&gt;&lt;span style=&quot;font-size: 20px;&quot;&gt;producingPositivePower&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;curved=1;fontSize=14;endSize=10;startSize=10;strokeWidth=5;" parent="54" source="81" target="70" edge="1">
+                    <mxGeometry x="-0.5955" y="70" relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="320" y="210"/>
                             <mxPoint x="320" y="435"/>
@@ -182,7 +182,7 @@
                 <mxCell id="153" value="&lt;div&gt;&lt;span style=&quot;font-size: 20px;&quot;&gt;&lt;b&gt;Inputs from Nacelle:&lt;/b&gt;&lt;/span&gt;&lt;/div&gt;&lt;span style=&quot;font-size: 20px;&quot;&gt;- steadyRPM (Fallback: voltage based)&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;font-size: 20px;&quot;&gt;- targetRPMExceeded&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;font-size: 20px;&quot;&gt;- targetRPMMet&lt;/span&gt;&lt;/div&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;align=left;fontSize=14;" parent="54" vertex="1">
                     <mxGeometry x="10" y="360" width="280" height="120" as="geometry"/>
                 </mxCell>
-                <mxCell id="154" value="&lt;font&gt;&lt;span style=&quot;color: rgb(63, 63, 63);&quot;&gt;producingPositivePower&amp;nbsp;&lt;/span&gt;=&amp;nbsp;&lt;/font&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(63, 63, 63); background-color: rgb(255, 255, 255); text-align: center; text-wrap-mode: nowrap;&quot;&gt;(backFeedVoltage +&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(63, 63, 63); background-color: rgb(255, 255, 255); text-align: center; text-wrap-mode: nowrap;&quot;&gt;&amp;nbsp;vHysteresisWindow/2)&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(63, 63, 63); background-color: rgb(255, 255, 255); text-align: center; text-wrap-mode: nowrap;&quot;&gt;Note: Previous versions&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(63, 63, 63); background-color: rgb(255, 255, 255); text-align: center; text-wrap-mode: nowrap;&quot;&gt;included a second stage that&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(63, 63, 63); background-color: rgb(255, 255, 255); text-align: center; text-wrap-mode: nowrap;&quot;&gt;was &amp;gt; 6 V (?).&lt;/span&gt;&lt;/div&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;align=left;fontSize=20;" parent="54" vertex="1">
+                <mxCell id="154" value="&lt;font&gt;&lt;span style=&quot;color: rgb(63, 63, 63);&quot;&gt;producingPositivePower&amp;nbsp;&lt;/span&gt;=&lt;/font&gt;&lt;div&gt;&lt;font&gt;&lt;span style=&quot;color: rgb(192, 192, 192);&quot;&gt;loadSidePCCVoltage &amp;gt;&lt;/span&gt;&amp;nbsp;&lt;/font&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(63, 63, 63); background-color: rgb(255, 255, 255); text-align: center; text-wrap-mode: nowrap;&quot;&gt;(backFeedVoltage +&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(63, 63, 63); background-color: rgb(255, 255, 255); text-align: center; text-wrap-mode: nowrap;&quot;&gt;&amp;nbsp;vHysteresisWindow/2)&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(63, 63, 63); background-color: rgb(255, 255, 255); text-align: center; text-wrap-mode: nowrap;&quot;&gt;Note: Previous versions&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(63, 63, 63); background-color: rgb(255, 255, 255); text-align: center; text-wrap-mode: nowrap;&quot;&gt;included a second stage that&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(63, 63, 63); background-color: rgb(255, 255, 255); text-align: center; text-wrap-mode: nowrap;&quot;&gt;was &amp;gt; 6 V (?).&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;align=left;fontSize=20;" parent="54" vertex="1">
                     <mxGeometry x="10" y="200" width="280" height="150" as="geometry"/>
                 </mxCell>
                 <mxCell id="38" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=1;entryDx=0;entryDy=0;fillColor=#e3c800;strokeColor=#B09500;curved=1;fontSize=14;endSize=10;startSize=10;strokeWidth=5;" parent="1" source="3" target="5" edge="1">
@@ -256,14 +256,18 @@
                 <mxCell id="6" value="&lt;font&gt;Reset&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=20;" parent="1" vertex="1">
                     <mxGeometry x="90" y="160" width="80" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="35" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0;exitDx=0;exitDy=0;curved=1;fillColor=#e3c800;strokeColor=#B09500;fontSize=14;strokeWidth=5;endSize=10;startSize=10;" parent="1" source="22" edge="1">
+                <mxCell id="35" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0;exitDx=0;exitDy=0;curved=1;fillColor=#e3c800;strokeColor=#B09500;fontSize=14;strokeWidth=5;endSize=10;startSize=10;entryX=1;entryY=1;entryDx=0;entryDy=0;" parent="1" source="22" edge="1" target="5">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="438" y="364" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="275" y="420"/>
+                            <mxPoint x="441" y="420"/>
+                        </Array>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="39" value="&lt;div&gt;&lt;font style=&quot;color: light-dark(rgb(0, 0, 0), rgb(141, 118, 0)); font-size: 20px;&quot;&gt;&lt;font&gt;~safetyTask&lt;/font&gt;&lt;span style=&quot;background-color: light-dark(#ffffff, var(--ge-dark-color, #121212));&quot;&gt;&amp;nbsp;&amp;amp;&amp;amp;&amp;nbsp;&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;&lt;span style=&quot;color: rgb(63, 63, 63); font-size: 20px; text-align: left; text-wrap-mode: wrap; background-color: rgb(251, 251, 251);&quot;&gt;~producingPositivePower&lt;/span&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=14;" parent="35" vertex="1" connectable="0">
                     <mxGeometry x="-0.206" relative="1" as="geometry">
-                        <mxPoint x="62" y="-39" as="offset"/>
+                        <mxPoint x="90" y="-10" as="offset"/>
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="22" value="&lt;div&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;&lt;u&gt;sStartLoad&lt;/u&gt;:&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;div style=&quot;scrollbar-color: rgb(75, 75, 75) rgb(27, 29, 30);&quot;&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;- Pitch -&amp;gt; Fine&lt;/font&gt;&lt;/div&gt;&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;" parent="1" vertex="1">
@@ -311,7 +315,7 @@
                     <mxGeometry x="650" y="400" width="160" height="120" as="geometry"/>
                 </mxCell>
                 <mxCell id="26" value="&lt;div&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;~safetyTask &amp;amp;&amp;amp;&lt;/font&gt;&lt;/div&gt;&lt;span style=&quot;color: rgb(63, 63, 63); font-size: 20px; text-align: left; text-wrap-mode: wrap; background-color: rgb(251, 251, 251);&quot;&gt;targetRPMExceeded&amp;nbsp;&lt;/span&gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=1;entryDx=0;entryDy=0;curved=1;fontSize=14;endSize=10;startSize=10;strokeWidth=5;" parent="1" source="2" target="3" edge="1">
-                    <mxGeometry x="-0.016" relative="1" as="geometry">
+                    <mxGeometry x="-0.0166" y="-10" relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="600" y="631"/>
                             <mxPoint x="600" y="502"/>
@@ -320,7 +324,7 @@
                     </mxGeometry>
                 </mxCell>
                 <mxCell id="42" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;~safetyTask &amp;amp;&amp;amp;&lt;/font&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(63, 63, 63); font-size: 20px; text-align: left; text-wrap-mode: wrap; background-color: rgb(251, 251, 251);&quot;&gt;targetRPMMet&lt;/span&gt;&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;curved=1;fontSize=14;endSize=10;startSize=10;strokeWidth=5;" parent="1" source="3" target="2" edge="1">
-                    <mxGeometry x="-0.3221" y="40" relative="1" as="geometry">
+                    <mxGeometry x="-0.322" y="-10" relative="1" as="geometry">
                         <mxPoint as="offset"/>
                     </mxGeometry>
                 </mxCell>
