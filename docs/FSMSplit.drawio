@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="SB79aGflLbm6-LKJB5wv" name="Page-1">
-        <mxGraphModel dx="1570" dy="938" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1080" math="0" shadow="0">
+        <mxGraphModel dx="889" dy="596" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1080" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -327,7 +327,7 @@
                 <mxCell id="5" value="&lt;div&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;&lt;u&gt;sRST&lt;/u&gt;:&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;(Default)&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(63, 63, 63); font-size: 20px; background-color: transparent;&quot;&gt;- Pitch -&amp;gt; cut in&lt;/span&gt;&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;fontSize=14;" parent="1" vertex="1">
                     <mxGeometry x="270" y="200" width="200" height="160" as="geometry"/>
                 </mxCell>
-                <mxCell id="24" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;&lt;span&gt;~safetyTask &amp;amp;&amp;amp;&lt;/span&gt;&lt;/font&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(63, 63, 63); font-size: 20px; text-align: left; text-wrap-mode: wrap; background-color: rgb(251, 251, 251);&quot;&gt;producingPositivePower&lt;/span&gt;&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;curved=1;fontSize=14;endSize=10;startSize=10;strokeWidth=5;" parent="1" source="5" target="22" edge="1">
+                <mxCell id="24" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;&lt;span&gt;safetyTask &amp;amp;&amp;amp;&lt;/span&gt;&lt;/font&gt;&lt;div&gt;&lt;span style=&quot;color: rgb(63, 63, 63); font-size: 20px; text-align: left; text-wrap-mode: wrap; background-color: rgb(251, 251, 251);&quot;&gt;&lt;u&gt;producingPositivePower&lt;/u&gt;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;curved=1;fontSize=14;endSize=10;startSize=10;strokeWidth=5;" parent="1" source="5" target="22" edge="1">
                     <mxGeometry x="0.0835" y="60" relative="1" as="geometry">
                         <Array as="points">
                             <mxPoint x="90" y="280"/>
@@ -366,7 +366,7 @@
                 <mxCell id="61" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;- Last year, we ran the&amp;nbsp;&lt;/font&gt;&lt;span style=&quot;color: rgb(63, 63, 63); font-size: 20px; background-color: transparent;&quot;&gt;FSM at 9 Hz&lt;/span&gt;&lt;div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 20px;&quot;&gt;- These loops may be overridden manually for testing&lt;/font&gt;&lt;/div&gt;&lt;/div&gt;" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;align=left;fontSize=14;" parent="1" vertex="1">
                     <mxGeometry x="970" y="720" width="550" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="161" value="- Backfeed controls have been moved to hardware as of last year" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;align=left;fontSize=20;" vertex="1" parent="1">
+                <mxCell id="161" value="- Backfeed controls have been moved to hardware as of last year" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;align=left;fontSize=20;" parent="1" vertex="1">
                     <mxGeometry x="2310" y="720" width="200" height="110" as="geometry"/>
                 </mxCell>
             </root>
