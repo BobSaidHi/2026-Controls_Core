@@ -8,7 +8,7 @@ namespace FSMCommon {
         sESTOP,
         sRST,
         sStartLoad,
-        sSRunLoad,
+        sRunLoad,
         sCurtail
     };
 }
