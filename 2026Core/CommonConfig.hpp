@@ -46,8 +46,8 @@ namespace WTbCommonConfig {
     constexpr uint_fast8_t MAX_MSG_SIZE = 40; // todo
 
     /* Additional Checks*/
-    constexpr uint8_t TIME_TO_MICROS_ROLLOVER_MINS = UINT32_MAX / 1000000 / 60;
-    constexpr uint8_t TIME_TO_MILLIS_ROLLOVER_DAYS =
+    constexpr uint_fast8_t TIME_TO_MICROS_ROLLOVER_MINS = UINT32_MAX / 1000000 / 60;
+    constexpr uint_fast8_t TIME_TO_MILLIS_ROLLOVER_DAYS =
         UINT32_MAX / 1000 / 60 / 60 / 24;
 
 } // end namespace WTbCommonConfig
