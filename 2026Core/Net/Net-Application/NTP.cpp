@@ -35,7 +35,7 @@ bool SyncedClock::initTimeSync(const etl::array<uint8_t, 6> upstreamMAC) {
 
     // Convert to packet
     auto packet = Packet(data, (uint8_t)sizeof(timeSyncInit_micros),
-                           Packet::PacketType::NTPRequest);
+                         Packet::PacketType::NTPRequest);
     ESP_LOGV(TAG, "Created packet");
 
     // Send current time
@@ -56,7 +56,7 @@ bool SyncedClock::requestHandler(const etl::array<uint8_t, 6> upstreamMAC) {
 
         // Convert to packet
         auto packet = Packet(data, (uint8_t)sizeof(currentTime_micros),
-                               Packet::PacketType::NTPRequest);
+                             Packet::PacketType::NTPRequest);
 
         return netAdapter.send(upstreamMAC, packet, true);
     }

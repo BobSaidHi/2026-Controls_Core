@@ -6,6 +6,9 @@
 #include "../NetAdapter_A.hpp"
 
 // Library Imports
+#include <etl/format_spec.h>
+#include <etl/string.h>
+#include <etl/to_string.h>
 
 /* Constants */
 #define IMPL_OFFSET 0
@@ -33,6 +36,8 @@ class SyncedClock {
     /**
      * @brief Construct a new Synced Clock object
      * @param netAdapter the network adapter to use for time sync
+     * @see ../docs/cpp/explicit_SonarLint.md
+     * @includedoc ../docs/cpp/explicit_SonarLint.md
      */
     explicit SyncedClock(NetAdapter_A &netAdapter);
     ~SyncedClock() = default;
