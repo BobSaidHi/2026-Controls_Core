@@ -75,6 +75,13 @@ class SyncedClock {
      */
     unsigned long getCorrectionFactor() const;
 
+    constexpr static uint_fast8_t LOG_STRING_SIZE = 3 + ((11 + 6) * 3) + 1;
+    /**
+     * @brief Get at string that describes the current state of the clock
+     * @returns the current state of the clock as a string
+     */
+    etl::string<LOG_STRING_SIZE> getLogString() const;
+
   private: // MARK: Private
     NetAdapter_A &netAdapter;
     unsigned long lastSyncTime_micros = 0;

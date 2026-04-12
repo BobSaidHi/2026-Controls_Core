@@ -124,6 +124,25 @@ unsigned long SyncedClock::getCorrectionFactor() const {
     return correctionFactor_micros;
 }
 
+/**
+ * @see https://stackoverflow.com/questions/3350385/how-to-return-an-object-in-c
+ */
+etl::string<SyncedClock::LOG_STRING_SIZE> SyncedClock::getLogString() const {
+    etl::string<LOG_STRING_SIZE> logString(TAG); // 3 chars
+    logString.append(": lsTus: 0x");             // 11 chars
+
+    etl::format_spec format;
+    format.hex().width(6).fill('0'); // [6 chars]
+
+    etl::to_string(lastSyncTime_micros, logString, format, true); // 6 chars
+    logString.append(": tSIus: 0x");                              // 11 chars
+    etl::to_string(timeSyncInit_micros, logString, format, true); // 6 chars
+    logString.append(": cFus: 0x");                               // 11 chars
+    etl::to_string(correctionFactor_micros, logString, format, true); // 6 chars
+
+    return logString;
+};
+
 // MARK: System Timer
 #if IMPL_USED == IMPL_SYSRTC
 
