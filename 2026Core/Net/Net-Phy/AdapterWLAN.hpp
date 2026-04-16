@@ -64,7 +64,7 @@ class AdapterWLAN : public NetAdapter_A {
      * @see Pages 74 - 75 of the ESP32-C5 datasheet
      * @see https://documentation.espressif.com/esp32-c5_datasheet_en.html
      */
-    enum class ESP32C5_2Hz4_ADJ_CH_REJECTION_dB : uint_fast32_t {
+    enum class ESP32C5_2Hz4_ADJ_CH_REJ_dB : uint_fast32_t {
         WIFIB_DSSS_1Mbps = 41,
         WIFIB_CCK_11Mbps = 40,
         WIFIG_OFDM_6Mbps = 37,
@@ -82,7 +82,7 @@ class AdapterWLAN : public NetAdapter_A {
      * @see Page 72 of the datasheet
      * @see https://documentation.espressif.com/esp32-s3_datasheet_en.html
      */
-    enum class ESP32S3_2Hz4_ADJ_CH_REJECTION_dB : uint_fast32_t {
+    enum class ESP32S3_2Hz4_ADJ_CH_REJ_dB : uint_fast32_t {
         WIFIB_1Mbps = 35,
         WIFIB_11Mbps = 35,
         WIFIG_6Mbps = 31,
@@ -119,6 +119,10 @@ class AdapterWLAN : public NetAdapter_A {
     ~AdapterWLAN() = default; // todo implement any remaining virtual functions
 
     // MARK: Public Concrete
+
+    // etl::string<len> toLogString() {
+    //     return 
+    // }
 
     /**
      * @brief Identify the optimal channel to use for communication
@@ -195,6 +199,8 @@ class AdapterWLAN : public NetAdapter_A {
 
 //   protected:
   private: // MARK: Private
+    // todo track stats?
+
     /**
      * @brief Get the maximum configured transmit power
      * @returns the maximum configured transmit power in dBm in units of 0.25
