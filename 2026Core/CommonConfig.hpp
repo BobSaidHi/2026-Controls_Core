@@ -44,6 +44,7 @@ namespace WTbCommonConfig {
     // constexpr uint_fast8_t DEBUG_LEVEL = CT_LOG_LEVEL_MACRO; // todo
     // CONFIG - Size of string to store debug message
     constexpr uint_fast8_t MAX_MSG_SIZE = 40; // todo
+    constexpr unsigned long SERIAL_BAUD = 115200; // CONFIG - Baud rate for serial communication
 
     /* Additional Checks*/
     constexpr uint_fast8_t TIME_TO_MICROS_ROLLOVER_MINS = UINT32_MAX / 1000000 / 60;
