@@ -4,7 +4,7 @@
 // Create packets
 // =====================
 
-void makeNacellePacket(NacellePacket &packet, float rpm) {
+void makeNacellePacket(NacellePacket &packet, int16_t rpm) {
   packet.rpm = rpm;
 }
 
@@ -14,9 +14,9 @@ void makeLoadboxPacket(
   uint8_t estop,
   uint16_t actuatorPos
 ) {
-  packet.state = state;
-  packet.estop = estop;
-  packet.actuatorPos = actuatorPos;
+  // packet.state = state;
+  packet.safety = estop;
+  // packet.actuatorPos = actuatorPos;
 }
 
 // =====================
@@ -31,15 +31,15 @@ void printNacellePacket(const NacellePacket &packet, Stream &out) {
 }
 
 void printLoadboxPacket(const LoadboxPacket &packet, Stream &out) {
-  out.println("---- LoadboxPacket ----");
-  out.print("State: ");
-  out.println(packet.state);
+  // out.println("---- LoadboxPacket ----");
+  // out.print("State: ");
+  // out.println(packet.state);
 
   out.print("EStop: ");
-  out.println(packet.estop);
+  out.println(packet.safety);
 
-  out.print("ActuatorPos: ");
-  out.println(packet.actuatorPos);
+  // out.print("ActuatorPos: ");
+  // out.println(packet.actuatorPos);
 
   out.println("-----------------------");
 }

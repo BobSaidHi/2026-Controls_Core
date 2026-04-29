@@ -11,16 +11,15 @@ const uint8_t SENDER_LOADBOX = 2;
 // NACELLE → LOADBOX
 // =====================
 struct NacellePacket {
-  float rpm;
+  int16_t rpm;
 };
 
 // =====================
 // LOADBOX → NACELLE
 // =====================
 struct LoadboxPacket {
-  uint8_t state;
-  uint8_t estop;
-  float actuatorPos;
+  uint8_t safety;
+  // todo add power stuff
 };
 
 // =====================
@@ -30,14 +29,13 @@ struct LoadboxPacket {
 // Build packets
 void makeNacellePacket(
  NacellePacket &packet,
- float rpm
+ int16_t rpm
  );
 
 void makeLoadboxPacket(
   LoadboxPacket &packet,
-  uint8_t state,
-  uint8_t estop,
-  uint16_t actuatorPos
+  uint8_t safety
+  // todo add power stuff
 );
 
 // Debug printing
