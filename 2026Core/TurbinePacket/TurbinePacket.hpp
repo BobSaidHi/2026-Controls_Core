@@ -1,5 +1,5 @@
-#ifndef TURBINE_PACKET_H
-#define TURBINE_PACKET_H
+#ifndef TURBINE_PACKET_HPP
+#define TURBINE_PACKET_HPP
 
 #include <Arduino.h>
 
@@ -44,4 +44,4 @@ void makeLoadboxPacket(
 void printNacellePacket(const NacellePacket &packet, Stream &out);
 void printLoadboxPacket(const LoadboxPacket &packet, Stream &out);
 
-#endif
+#endif // TURBINE_PACKET_HPP
