@@ -10,9 +10,9 @@ void makeNacellePacket(NacellePacket &packet, int16_t rpm) {
 
 void makeLoadboxPacket(
   LoadboxPacket &packet,
-  uint8_t state,
-  uint8_t estop,
-  uint16_t actuatorPos
+  // uint8_t state,
+  uint8_t estop //,
+  // uint16_t actuatorPos
 ) {
   // packet.state = state;
   packet.safety = estop;
