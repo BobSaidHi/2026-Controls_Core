@@ -20,7 +20,7 @@
 
 SyncedClock::SyncedClock(NetAdapter_A &netAdapter) : netAdapter(netAdapter) {}
 
-bool SyncedClock::initTimeSync(const etl::array<uint8_t, 6> upstreamMAC) {
+bool SyncedClock::initTimeSync(const etl::array<uint8_t, 6> &upstreamMAC) {
     // Get time data
     timeSyncInit_micros = micros();
     ESP_LOGV(TAG, "Time sync init at %lu micros", timeSyncInit_micros);
@@ -34,29 +34,32 @@ bool SyncedClock::initTimeSync(const etl::array<uint8_t, 6> upstreamMAC) {
     ESP_LOGV(TAG, "Converted time sync init to byte array");
 
     // Convert to packet
-    auto packet = Packet(data, (uint8_t)sizeof(timeSyncInit_micros),
-                         Packet::PacketType::NTPRequest);
+    auto packet =
+        Packet(data, static_cast<uint8_t>(sizeof(timeSyncInit_micros)),
+               Packet::PacketType::NTPRequest);
     ESP_LOGV(TAG, "Created packet");
 
     // Send current time
     return netAdapter.send(upstreamMAC, packet, true);
 }
 
-bool SyncedClock::requestHandler(const etl::array<uint8_t, 6> upstreamMAC) {
+bool SyncedClock::requestHandler(const etl::array<uint8_t, 6> &upstreamMAC) {
     if (timeSyncInit_micros == 0) {
         // Return current time to client
         // Get time data
-        unsigned long currentTime_micros = micros();
+        const unsigned long currentTime_micros = micros();
 
         // Convert to byte array
-        const uint8_t *currentTime_data = (uint8_t *)&currentTime_micros;
+        const uint8_t *currentTime_data =
+            reinterpret_cast<const uint8_t *>(&currentTime_micros);
         etl::array<uint8_t, WTbNetConfig::MAX_PACKET_DATA_LENGTH> data = {
             currentTime_data[0], currentTime_data[1], currentTime_data[2],
             currentTime_data[3]};
 
         // Convert to packet
-        auto packet = Packet(data, (uint8_t)sizeof(currentTime_micros),
-                             Packet::PacketType::NTPRequest);
+        auto packet =
+            Packet(data, static_cast<uint8_t>(sizeof(currentTime_micros)),
+                   Packet::PacketType::NTPRequest);
 
         return netAdapter.send(upstreamMAC, packet, true);
     }
@@ -129,15 +132,15 @@ unsigned long SyncedClock::getCorrectionFactor() const {
  */
 etl::string<SyncedClock::LOG_STRING_SIZE> SyncedClock::getLogString() const {
     etl::string<LOG_STRING_SIZE> logString(TAG); // 3 chars
-    logString.append(": lsTus: 0x");             // 11 chars
+    (void)logString.append(": lsTus: 0x");       // 11 chars
 
     etl::format_spec format;
-    format.hex().width(6).fill('0'); // [6 chars]
+    (void)format.hex().width(6).fill('0'); // [6 chars]
 
     etl::to_string(lastSyncTime_micros, logString, format, true); // 6 chars
-    logString.append(": tSIus: 0x");                              // 11 chars
+    (void)logString.append(": tSIus: 0x");                        // 11 chars
     etl::to_string(timeSyncInit_micros, logString, format, true); // 6 chars
-    logString.append(": cFus: 0x");                               // 11 chars
+    (void)logString.append(": cFus: 0x");                         // 11 chars
     etl::to_string(correctionFactor_micros, logString, format, true); // 6 chars
 
     return logString;

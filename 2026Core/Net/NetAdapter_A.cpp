@@ -39,7 +39,7 @@ uint32_t NetAdapter_A::testThroughput(uint_fast8_t maxTime,
     etl::array<uint8_t, WTbNetConfig::MAX_PACKET_DATA_LENGTH> data;
     // Prepare data
     for (int i = 1; i < WTbNetConfig::MAX_PACKET_DATA_LENGTH; i++) {
-        data[i] = (uint8_t)i;
+        data[i] = static_cast<uint8_t>(i);
     }
     ESP_LOGV(TAG, "Default Packet Ready");
     // delay(1000);
@@ -58,7 +58,7 @@ uint32_t NetAdapter_A::testThroughput(uint_fast8_t maxTime,
     // Calculate maximum test duration
     const uint64_t startTime = millis();
     ESP_LOGD(TAG, "sT: ", startTime);
-    const uint64_t endTime = millis() + ((uint32_t)maxTime * 1000);
+    const uint64_t endTime = millis() + (static_cast<uint32_t>(maxTime) * 1000);
     ESP_LOGD(TAG, "eT: ", endTime);
     ESP_LOGV(TAG, "Test Duration Calculated");
     // delay(1000);
@@ -71,10 +71,11 @@ uint32_t NetAdapter_A::testThroughput(uint_fast8_t maxTime,
         ESP_LOGV(TAG, "SP");
         // Update packet if checking latency
         // constexpr uint8_t millisLen = sizeof(millis());
-        data[0] = (uint8_t)false;
+        data[0] = static_cast<uint8_t>(false);
         if (checkLatency) {
             ESP_LOGD(TAG, "Checking Latency");
-            const uint8_t *currentTime = (uint8_t *)millis();
+            const uint8_t *currentTime =
+                reinterpret_cast<const uint8_t *>(millis());
             static_assert(data.size() == WTbNetConfig::MAX_PACKET_DATA_LENGTH);
             ESP_LOGV(TAG, "Copying Time");
             memcpy(data.begin() + 1, &currentTime, sizeof(currentTime));
@@ -93,19 +94,22 @@ uint32_t NetAdapter_A::testThroughput(uint_fast8_t maxTime,
     // Send once more w/ end indicator
     // Update packet if checking latency
     // constexpr uint8_t millisLen = sizeof(millis());
-    data[0] = (uint8_t)true;
+    data[0] = static_cast<uint8_t>(true);
     if (checkLatency) {
         ESP_LOGD(TAG, "Checking Latency");
-        const uint8_t *currentTime = (uint8_t *)millis();
+        const uint8_t *currentTime =
+            reinterpret_cast<const uint8_t *>(millis());
         static_assert(data.size() == WTbNetConfig::MAX_PACKET_DATA_LENGTH);
         ESP_LOGV(TAG, "Copying Time");
-        memcpy(data.begin() + 1, &currentTime, sizeof(currentTime));
+        (void)memcpy(data.begin() + 1, &currentTime, sizeof(currentTime));
         ESP_LOGV(TAG, "Time Copied");
         packet.setContents(data, data.size(), Packet::PacketType::NetTest);
     }
 
     // Actually send the packet
-    this->sendAll(packet.getRawPacket(), packet.getLengthValid());
+    if (!this->sendAll(packet.getRawPacket(), packet.getLengthValid())) {
+        ESP_LOGE(TAG, "Packet send failed");
+    }
     // Statistics
     bytesSent += WTbNetConfig::MAX_PACKET_ABS_LEN;
     ESP_LOGV(TAG, "Test Complete");
@@ -114,13 +118,14 @@ uint32_t NetAdapter_A::testThroughput(uint_fast8_t maxTime,
     ESP_LOGD(TAG, "bytesSent: ", bytesSent);
     uint64_t elapsedTime = millis() - startTime;
     ESP_LOGD(TAG, "timeElapsed: ", elapsedTime);
-    auto netSpeed = (uint32_t)((uint64_t)bytesSent * 1000 / elapsedTime);
+    auto netSpeed = static_cast<uint32_t>(static_cast<uint64_t>(bytesSent) *
+                                          1000 / elapsedTime);
     ESP_LOGI(TAG, "SPD-bps: ", netSpeed);
     ESP_LOGV(TAG, "ret");
     return netSpeed;
 }
 
-bool NetAdapter_A::send(const etl::array<uint8_t, 6> destMAC_addr,
+bool NetAdapter_A::send(const etl::array<uint8_t, 6> &destMAC_addr,
                         const Packet &packet, const bool verifyReceipt) {
     ESP_LOGV(TAG, "send");
     return this->send(destMAC_addr, packet.getRawPacket(),

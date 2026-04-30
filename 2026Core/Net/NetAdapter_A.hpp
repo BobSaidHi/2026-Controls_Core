@@ -22,7 +22,7 @@
  * required for a Network Adapter
  */
 class NetAdapter_A {
-  // protected:
+    // protected:
     /* MARK: Protected Member Variables */
 
     // etl::array<uint8_t, 6> MACAddress;
@@ -63,7 +63,7 @@ class NetAdapter_A {
      * @param verifyReceipt whether to verify the data was received
      */
     virtual bool
-    send(const etl::array<uint8_t, 6> destMAC_addr,
+    send(const etl::array<uint8_t, 6> &destMAC_addr,
          const etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> &data,
          const uint_fast8_t bytesValid, const bool verifyReceipt) = 0;
 
@@ -74,7 +74,7 @@ class NetAdapter_A {
      * @param packet to send
      * @param verifyReceipt whether to verify the data was received
      */
-    bool send(const etl::array<uint8_t, 6> destMAC_addr, const Packet &packet,
+    bool send(const etl::array<uint8_t, 6> &destMAC_addr, const Packet &packet,
               const bool verifyReceipt);
 
     /**

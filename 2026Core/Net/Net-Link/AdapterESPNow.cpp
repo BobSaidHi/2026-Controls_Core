@@ -47,8 +47,8 @@ bool AdapterESPNow::begin() {
         ESP_LOGE(TAG, "Failed to register send callback");
         return false;
     }
-    if (esp_now_register_recv_cb(
-            (esp_now_recv_cb_t)AdapterESPNow::OnDataRecv) != ESP_OK) {
+    if (esp_now_register_recv_cb(reinterpret_cast<esp_now_recv_cb_t>(
+            AdapterESPNow::OnDataRecv)) != ESP_OK) {
         ESP_LOGE(TAG, "Failed to register receive callback");
         return false;
     }
@@ -114,7 +114,7 @@ void AdapterESPNow::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData,
     // Apparently the ETL implementation has a handy function to do this
     etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> incomingDataArray = {
         0};
-    incomingDataArray.assign(incomingData, incomingData + len);
+    (void)incomingDataArray.assign(incomingData, incomingData + len);
 
     // todo: enqueue to process later
     // todo: Handle the received data
@@ -126,7 +126,7 @@ void AdapterESPNow::OnDataRecv(const uint8_t *mac, const uint8_t *incomingData,
 // MARK: Network
 
 bool AdapterESPNow::send(
-    const etl::array<uint8_t, 6> destMAC_addr,
+    const etl::array<uint8_t, 6> &destMAC_addr,
     const etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> &data,
     const uint_fast8_t bytesValid, const bool verifyReceipt) {
     ESP_LOGV(TAG, "Sending %d bytes to %s", bytesValid,
@@ -167,14 +167,15 @@ bool AdapterESPNow::sendAll(
 /* ESP Now Wrappers */
 // MARK: ESP Now Specific
 
-bool AdapterESPNow::registerPeer(const etl::array<uint8_t, 6> MACAddress) {
+bool AdapterESPNow::registerPeer(const etl::array<uint8_t, 6> &MACAddress) {
     // Construct Peer Information
     esp_now_peer_info_t peerInfo = {};
 
     // Validate Array Sizes
     static_assert(sizeof(peerInfo.peer_addr) == 6, "MAC address size mismatch");
     static_assert(MACAddress.size() == 6, "MAC address size mismatch");
-    memcpy(peerInfo.peer_addr, MACAddress.data(), sizeof(peerInfo.peer_addr));
+    (void)memcpy(peerInfo.peer_addr, MACAddress.data(),
+                 sizeof(peerInfo.peer_addr));
 
     // Register Peer
     if (esp_now_add_peer(&peerInfo) != ESP_OK) {
@@ -190,7 +191,7 @@ bool AdapterESPNow::registerPeer(const etl::array<uint8_t, 6> MACAddress) {
     return true;
 }
 
-bool AdapterESPNow::deregisterPeer(const etl::array<uint8_t, 6> MACAddress) {
+bool AdapterESPNow::deregisterPeer(const etl::array<uint8_t, 6> &MACAddress) {
     ESP_LOGE(TAG, "Not implemented");
     return false;
 }

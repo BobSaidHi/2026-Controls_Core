@@ -69,7 +69,7 @@ class AdapterESPNow : public NetAdapter_A {
      * @param verifyReceipt whether to verify the data was received
      * @returns true if the data was sent successfully, false otherwise
      */
-    bool send(const etl::array<uint8_t, 6> destMAC_addr,
+    bool send(const etl::array<uint8_t, 6> &destMAC_addr,
               const etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> &data,
               const uint_fast8_t bytesValid, const bool verifyReceipt) override;
 
@@ -90,7 +90,7 @@ class AdapterESPNow : public NetAdapter_A {
      * @param MACAddress the MAC address of the peer to register
      * @returns true if the peer was registered successfully, false otherwise
      */
-    bool registerPeer(const etl::array<uint8_t, 6> MACAddress);
+    bool registerPeer(const etl::array<uint8_t, 6> &MACAddress);
 
     /**
      * @brief Deregister a peer
@@ -98,7 +98,7 @@ class AdapterESPNow : public NetAdapter_A {
      * @returns true if the peer was deregistered successfully, false otherwise
      * @deprecated NotImplemented
      */
-    bool deregisterPeer(const etl::array<uint8_t, 6> MACAddress);
+    bool deregisterPeer(const etl::array<uint8_t, 6> &MACAddress);
 
     /**
      * @brief Get the MAC address of the network interface

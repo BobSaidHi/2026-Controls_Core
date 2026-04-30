@@ -47,13 +47,13 @@ class SyncedClock {
      * @param upstreamMAC the MAC address of the upstream clock
      * @returns true if successful, false otherwise
      */
-    bool initTimeSync(const etl::array<uint8_t, 6> upstreamMAC);
+    bool initTimeSync(const etl::array<uint8_t, 6> &upstreamMAC);
 
     /**
      * @brief Handle incoming requests
      * @returns true if successful, false otherwise
      */
-    bool requestHandler(const etl::array<uint8_t, 6> upstreamMAC);
+    bool requestHandler(const etl::array<uint8_t, 6> &upstreamMAC);
 
     // MARK: Getters
 

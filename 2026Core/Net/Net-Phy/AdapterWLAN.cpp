@@ -25,7 +25,7 @@ AdapterWLAN::AdapterWLAN() {
 // MARK: Public Concrete
 
 etl::string<AdapterWLAN::MAC_ADDR_STR_LEN>
-AdapterWLAN::formatMACAddress(const etl::array<uint8_t, 6> rawMACAddress) {
+AdapterWLAN::formatMACAddress(const etl::array<uint8_t, 6> &rawMACAddress) {
     ESP_LOGV(TAG, "func. called");
     // delay(1500);
     //   Format the MAC address and log it
@@ -35,31 +35,29 @@ AdapterWLAN::formatMACAddress(const etl::array<uint8_t, 6> rawMACAddress) {
 
     constexpr uint_fast8_t segmentDigits = 2;
     etl::format_spec format;
-    format.hex();
-    format.width(segmentDigits);
-    format.fill('0');
+    (void)format.hex().width(segmentDigits).fill('0');
     ESP_LOGV(TAG, "Setup format spec");
     // delay(1500);
 
     ESP_LOGV(TAG, "Formatting");
     // delay(1500);
     etl::string<segmentDigits> formatBufferTmp;
-    MACAddressFormatted.append(
+    (void)MACAddressFormatted.append(
         etl::to_string(rawMACAddress.at(0), formatBufferTmp, format));
-    MACAddressFormatted.append(":");
-    MACAddressFormatted.append(
+    (void)MACAddressFormatted.append(":");
+    (void)MACAddressFormatted.append(
         etl::to_string(rawMACAddress.at(1), formatBufferTmp, format));
-    MACAddressFormatted.append(":");
-    MACAddressFormatted.append(
+    (void)MACAddressFormatted.append(":");
+    (void)MACAddressFormatted.append(
         etl::to_string(rawMACAddress.at(2), formatBufferTmp, format));
-    MACAddressFormatted.append(":");
-    MACAddressFormatted.append(
+    (void)MACAddressFormatted.append(":");
+    (void)MACAddressFormatted.append(
         etl::to_string(rawMACAddress.at(3), formatBufferTmp, format));
-    MACAddressFormatted.append(":");
-    MACAddressFormatted.append(
+    (void)MACAddressFormatted.append(":");
+    (void)MACAddressFormatted.append(
         etl::to_string(rawMACAddress.at(4), formatBufferTmp, format));
-    MACAddressFormatted.append(":");
-    MACAddressFormatted.append(
+    (void)MACAddressFormatted.append(":");
+    (void)MACAddressFormatted.append(
         etl::to_string(rawMACAddress.at(5), formatBufferTmp, format));
 
     ESP_LOGV(TAG, "ret");
@@ -106,6 +104,8 @@ uint8_t AdapterWLAN::identifyOptimalChannel() {
             ESP_LOGE(TAG, "RSSI too high");
         } else if (WiFi.RSSI(i) < ESP32_MIN_RSSI) {
             ESP_LOGE(TAG, "RSSI too low");
+        } else {
+            // continue
         }
 
         // 120 + 0 (max strength) = 120
@@ -118,8 +118,8 @@ uint8_t AdapterWLAN::identifyOptimalChannel() {
             ch1RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_0_WEIGHT);
         } else if (WiFi.channel(i) == 2) { // Ch. 2 overlaps with ch. 1 and 6
             ch1RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_1_WEIGHT);
-            ch6RSSITotal +=
-                (uint_fast16_t)(inverseRSSI * WTbNetConfig::OFFSET_4_WEIGHT);
+            ch6RSSITotal += static_cast<uint_fast16_t>(
+                inverseRSSI * WTbNetConfig::OFFSET_4_WEIGHT);
         } else if (WiFi.channel(i) == 3) { // Ch. 3 overlaps with ch. 1 and 6
             ch1RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_2_WEIGHT);
             ch6RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_3_WEIGHT);
@@ -127,15 +127,15 @@ uint8_t AdapterWLAN::identifyOptimalChannel() {
             ch1RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_3_WEIGHT);
             ch6RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_2_WEIGHT);
         } else if (WiFi.channel(i) == 5) { // Ch. 5 overlaps with ch. 1 and 6
-            ch1RSSITotal += (uint_fast16_t)((float)inverseRSSI *
-                                            WTbNetConfig::OFFSET_4_WEIGHT);
+            ch1RSSITotal += static_cast<uint_fast16_t>(
+                (float)inverseRSSI * WTbNetConfig::OFFSET_4_WEIGHT);
             ch6RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_1_WEIGHT);
         } else if (WiFi.channel(i) == 6) { // Ch. 6
             ch6RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_0_WEIGHT);
         } else if (WiFi.channel(i) == 7) { // Ch. 7 overlaps with ch. 6 and 11
             ch6RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_1_WEIGHT);
-            ch11RSSITotal +=
-                (uint_fast16_t)(inverseRSSI * WTbNetConfig::OFFSET_4_WEIGHT);
+            ch11RSSITotal += static_cast<uint_fast16_t>(
+                inverseRSSI * WTbNetConfig::OFFSET_4_WEIGHT);
         } else if (WiFi.channel(i) == 8) { // Ch. 8 overlaps with ch. 6 and 11
             ch6RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_2_WEIGHT);
             ch11RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_3_WEIGHT);
@@ -143,15 +143,17 @@ uint8_t AdapterWLAN::identifyOptimalChannel() {
             ch6RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_3_WEIGHT);
             ch11RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_2_WEIGHT);
         } else if (WiFi.channel(i) == 10) { // Ch. 10 overlaps with ch. 6 and 11
-            ch6RSSITotal += (uint_fast16_t)((float)inverseRSSI *
-                                            WTbNetConfig::OFFSET_4_WEIGHT);
+            ch6RSSITotal += static_cast<uint_fast16_t>(
+                (float)inverseRSSI * WTbNetConfig::OFFSET_4_WEIGHT);
             ch11RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_1_WEIGHT);
         } else if (WiFi.channel(i) == 11) { // Ch. 11
             ch11RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_0_WEIGHT);
         } else if (WiFi.channel(i) <=
                    14) { // Should never run in the North America
             ESP_LOGE(TAG, "Detected Illegal WiFi Ch.: %d", WiFi.channel(i));
-        } // Else: Ignore 5Ghz channels
+        } else {
+            // Else: Ignore 5Ghz channels
+        }
         ESP_LOGD(TAG, "Subtotals: C1: %d, C6: %d, C11: %d", ch1RSSITotal,
                  ch6RSSITotal, ch11RSSITotal);
     }
@@ -209,12 +211,18 @@ etl::array<uint8_t, 6> AdapterWLAN::getMACAddress() const {
     if (!(originalWiFiMode == WIFI_MODE_STA ||
           originalWiFiMode == WIFI_MODE_APSTA)) {
         ESP_LOGV(TAG, "Setting WiFi to STA mode");
-        WiFi.mode(WIFI_STA);
+        if (!WiFi.mode(WIFI_STA)) {
+            ESP_LOGE(TAG, "Failed to set WiFi mode");
+            return {0};
+        }
     } else {
         ESP_LOGV(TAG, "WiFi already in STA mode");
     }
 
-    WiFi.setBandMode(WIFI_BAND_MODE_2G_ONLY);
+    if (!WiFi.setBandMode(WIFI_BAND_MODE_2G_ONLY)) {
+        ESP_LOGE(TAG, "Failed to set WiFi band mode");
+        return {0};
+    }
 
     ESP_LOGV(TAG, "WiFi Status Check Done");
     // delay(1000);
@@ -230,7 +238,9 @@ etl::array<uint8_t, 6> AdapterWLAN::getMACAddress() const {
     // Cleanup WiFi Config Changes
     if (originalWiFiMode != WiFi.getMode()) {
         ESP_LOGV(TAG, "Resetting WifI Mode to Previous");
-        WiFi.mode(originalWiFiMode);
+        if (!WiFi.mode(originalWiFiMode)) {
+            ESP_LOGE(TAG, "Failed to reset WiFi mode");
+        }
     }
 
     // Check if the operation was successful
@@ -373,7 +383,7 @@ int_fast8_t AdapterWLAN::getMaxTxPower_Raw() {
 // MARK: Network Overrides
 
 bool AdapterWLAN::send(
-    const etl::array<uint8_t, 6> destMAC_addr,
+    const etl::array<uint8_t, 6> &destMAC_addr,
     const etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> &data,
     const uint_fast8_t bytesValid, const bool verifyReceipt) {
     ESP_LOGE(TAG, "AdapterWLAN::send not implemented");
@@ -392,7 +402,7 @@ bool AdapterWLAN::sendAll(
 int_fast8_t AdapterWLAN::getMaxTxPower_dBm() {
     const int_fast8_t txPower = getMaxTxPower_Raw();
     ESP_LOGD(TAG, "Tx power (dBm): ", txPower);
-    return (int_fast8_t)(txPower * 0.25);
+    return static_cast<int_fast8_t>(txPower * 0.25);
 }
 
 // End of file AdapterWLAN.cpp

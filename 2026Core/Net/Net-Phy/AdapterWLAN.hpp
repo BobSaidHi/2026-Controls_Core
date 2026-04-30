@@ -121,7 +121,7 @@ class AdapterWLAN : public NetAdapter_A {
     // MARK: Public Concrete
 
     // etl::string<len> toLogString() {
-    //     return 
+    //     return
     // }
 
     /**
@@ -148,8 +148,8 @@ class AdapterWLAN : public NetAdapter_A {
      * @brief Initialize the network adapter
      * @param wiFiChannel the channel to use
      */
-    bool
-    begin(const uint8_t wiFiChannel = (uint8_t)WTbNetConfig::WIFI_DEFAULT_CH);
+    bool begin(const uint8_t wiFiChannel =
+                   static_cast<uint8_t>(WTbNetConfig::WIFI_DEFAULT_CH));
 
     /**
      * @brief Format a MAC address as a string
@@ -157,7 +157,7 @@ class AdapterWLAN : public NetAdapter_A {
      * @returns the formatted MAC address
      */
     static etl::string<MAC_ADDR_STR_LEN>
-    formatMACAddress(const etl::array<uint8_t, 6> rawMACAddress);
+    formatMACAddress(const etl::array<uint8_t, 6> &rawMACAddress);
 
     /**
      * @brief Set the maximum transmit power
@@ -181,7 +181,7 @@ class AdapterWLAN : public NetAdapter_A {
      * @param bytesValid the number of valid bytes in the data array
      * @param verifyReceipt whether to verify the data was received
      */
-    bool send(const etl::array<uint8_t, 6> destMAC_addr,
+    bool send(const etl::array<uint8_t, 6> &destMAC_addr,
               const etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> &data,
               const uint_fast8_t bytesValid, const bool verifyReceipt) override;
 
@@ -197,7 +197,7 @@ class AdapterWLAN : public NetAdapter_A {
     sendAll(const etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> &data,
             const uint_fast8_t bytesValid) override;
 
-//   protected:
+    //   protected:
   private: // MARK: Private
     // todo track stats?
 

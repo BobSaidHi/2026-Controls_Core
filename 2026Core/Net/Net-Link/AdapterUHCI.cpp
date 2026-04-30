@@ -53,8 +53,8 @@ bool AdapterUHCI::begin() {
                                  UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE));
 
     // Configure UHCI
-    uhci_controller_handle_t uhci_ctrl;
-    ESP_ERROR_CHECK(uhci_new_controller(&UHCI_CFG, &uhci_ctrl));
+    uhci_controller_handle_t uhciCtrl;
+    ESP_ERROR_CHECK(uhci_new_controller(&UHCI_CFG, &uhciCtrl));
 
     ESP_LOGI(AdapterUHCI::TAG, "UHCI init @%d, tx:%d, rx:%d",
              UART_CFG.baud_rate, pins.tx, pins.rx);
@@ -71,8 +71,8 @@ bool AdapterUHCI::begin() {
         // .on_rx_trans_done = rxCallback, // Does not exist
     };
 
-    ESP_ERROR_CHECK(uhci_register_event_callbacks(uhci_ctrl, &uHCI_Callbacks,
-                                                  &uHCIContext));
+    ESP_ERROR_CHECK(
+        uhci_register_event_callbacks(uhciCtrl, &uHCI_Callbacks, &uHCIContext));
 
     return true; // TODO - check
 }
@@ -94,11 +94,11 @@ AdapterUHCI::txDoneCallback(uhci_controller_handle_t uhci_ctrl,
      * @details parameter `user_ctx` is parsed by the third parameter of
      * function`uhci_register_event_callbacks`
      */
-    auto *ctx = (UHCI_Context_t *)user_ctx;
+    auto *ctx = static_cast<UHCI_Context_t *>(user_ctx);
     NetStats_T &stats = ctx->txStats;
 
     // Record performance metrics
-    auto currentTime_uS = (uint_fast32_t)micros();
+    auto currentTime_uS = static_cast<uint_fast32_t>(micros());
 
     stats.bits += edata->sent_size;
     stats.packets++;
@@ -126,7 +126,7 @@ IRAM_ATTR bool AdapterUHCI::rxEventCallback(uhci_controller_handle_t uhci_ctrl,
      * @details parameter `user_ctx` is parsed by the third parameter of
      * function`uhci_register_event_callbacks`
      */
-    auto *ctx = (UHCI_Context_t *)user_ctx;
+    auto *ctx = static_cast<UHCI_Context_t *>(user_ctx);
     RxContext_t *rxCtx = &ctx->rx;
     NetStats_T &stats = ctx->rxStats;
 
@@ -134,14 +134,14 @@ IRAM_ATTR bool AdapterUHCI::rxEventCallback(uhci_controller_handle_t uhci_ctrl,
     uhci_event_t evt;
 
     rxCtx->receive_size += edata->recv_size;
-    memcpy(rxCtx->p_receive_data, edata->data, edata->recv_size);
+    (void)memcpy(rxCtx->p_receive_data, edata->data, edata->recv_size);
     if (edata->flags.totally_received) {
         evt = UHCI_EVT_EOF;
         // ctx->receive_size += edata->recv_size;
         // memcpy(ctx->p_receive_data, edata->data, edata->recv_size);
 
         // Record performance metrics
-        auto currentTime_uS = (uint_fast32_t)micros();
+        auto currentTime_uS = static_cast<uint_fast32_t>(micros());
 
         stats.bits += edata->recv_size;
         stats.packets++;
@@ -156,7 +156,8 @@ IRAM_ATTR bool AdapterUHCI::rxEventCallback(uhci_controller_handle_t uhci_ctrl,
         rxCtx->p_receive_data += edata->recv_size;
     }
 
-    xQueueSendFromISR(ctx->rx.uhci_queue, &evt, &xTaskWoken);
+    xQueueSendFromISR(ctx->rx.uhci_queue, &evt,
+                      &xTaskWoken); // TODO: Check return value?
     return xTaskWoken;
 }
 
@@ -212,7 +213,8 @@ void AdapterUHCI::receiveTask() {
                 // Wait at least 1 tick or for 1 byte, allowing the blocking
                 // receive function to wait for the rest of the message
                 constexpr uint32_t SEC_PER_MS = 1'000; // Conversion Factor
-                static_assert(4'000'000 * (uint64_t)SEC_PER_MS < UINT32_MAX,
+                static_assert(4'000'000 * static_cast<uint64_t>(SEC_PER_MS) <
+                                  UINT32_MAX,
                               "Be careful with the UHCI baud rate math!");
                 constexpr uint32_t BAUD_RATE_Bpms =
                     UART_CFG.baud_rate * SEC_PER_MS /
@@ -220,7 +222,7 @@ void AdapterUHCI::receiveTask() {
                 // Get time to block
                 constexpr uint32_t TMP_TIME_PER_BYTE_ms = 1 / BAUD_RATE_Bpms;
                 constexpr uint32_t TIME_PER_BYTE_ms =
-                    max((const uint32_t)1,
+                    max(static_cast<uint32_t>(1),
                         TMP_TIME_PER_BYTE_ms); // Constrain - min is 1
                 // Get time in ticks per byte
                 constexpr TickType_t BAUD_tICKSpB =

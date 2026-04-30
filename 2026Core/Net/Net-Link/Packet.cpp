@@ -7,7 +7,7 @@
 
 /* MARK: Standard Functions */
 
-Packet::Packet() = default;;
+Packet::Packet() = default;
 
 Packet::Packet(etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> &bin,
                const uint_fast8_t dataLength) {
@@ -22,7 +22,8 @@ Packet::Packet(etl::array<uint8_t, WTbNetConfig::MAX_PACKET_DATA_LENGTH> &bin,
 /* Getters */
 #pragma region Getters
 
-etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> Packet::getRawPacket() const {
+etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN>
+Packet::getRawPacket() const {
     /*assert(this->lengthValid >= 0 &&
            this->lengthValid <= WTbNetConfig::MAX_PACKET_LENGTH);*/
     return this->dataBuffer;
@@ -48,7 +49,7 @@ uint_fast8_t Packet::getLengthValid() const { return this->lengthValid; }
 void Packet::setContentsRaw(
     etl::array<uint8_t, WTbNetConfig::MAX_PACKET_ABS_LEN> &bin,
     const uint_fast8_t dataLength) {
-    std::copy(bin.begin() + 1, bin.end(), this->dataBuffer.begin());
+    (void)std::copy(bin.begin() + 1, bin.end(), this->dataBuffer.begin());
     this->lengthValid = dataLength;
 }
 
@@ -61,7 +62,9 @@ void Packet::setContents(
         handlingCode = handlingCode && HANDLE_ID_NET_MASK;
     }*/
     // Set the header
-    dataBuffer[0] = (uint8_t)((HEADER_VERSION << HANDLE_ID_LEN_BITS) + handlingCode); // todo check var types
+    dataBuffer[0] =
+        static_cast<uint8_t>((HEADER_VERSION << HANDLE_ID_LEN_BITS) +
+                             handlingCode); // todo check var types
 
     // Validate the data length
     if (dataLength > WTbNetConfig::MAX_PACKET_DATA_LENGTH) {
@@ -70,8 +73,8 @@ void Packet::setContents(
     }
 
     // Copy the data
-    std::copy(this->dataBuffer.begin() + 1, this->dataBuffer.end(),
-              bin.begin());
+    (void)std::copy(this->dataBuffer.begin() + 1, this->dataBuffer.end(),
+                    bin.begin());
     this->lengthValid = dataLength;
 }
 
