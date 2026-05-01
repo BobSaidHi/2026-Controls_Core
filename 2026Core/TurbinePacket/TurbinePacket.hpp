@@ -7,19 +7,38 @@
 const uint8_t SENDER_NACELLE = 1;
 const uint8_t SENDER_LOADBOX = 2;
 
+// Estop types
+enum class ESTOP_TYPE_NET : uint8_t {
+  NONE = 0,
+  BUTTON = 1,
+  LOAD_DISCONNECT = 2,
+  RESERVED = static_cast<uint8_t>(-1)
+};
+
+enum class ESTOP_TYPE_FAST : uint_fast8_t {
+  NONE = static_cast<uint_fast8_t>(ESTOP_TYPE_NET::NONE),
+  BUTTON = static_cast<uint_fast8_t>(ESTOP_TYPE_NET::BUTTON),
+  LOAD_DISCONNECT = static_cast<uint_fast8_t>(ESTOP_TYPE_NET::LOAD_DISCONNECT),
+  RESERVED = static_cast<uint_fast8_t>(ESTOP_TYPE_NET::RESERVED)
+};
+
 // =====================
 // NACELLE → LOADBOX
 // =====================
 struct NacellePacket {
   int16_t rpm;
+  int16_t angularAccell_RPMPS;
 };
 
 // =====================
 // LOADBOX → NACELLE
 // =====================
+// DONE: add power stuff
 struct LoadboxPacket {
-  uint8_t safety;
-  // todo add power stuff
+    int16_t d_mVPS;
+    int16_t current_mA;
+    int16_t dIPS;
+    ESTOP_TYPE_NET safety;
 };
 
 // =====================
@@ -29,13 +48,17 @@ struct LoadboxPacket {
 // Build packets
 void makeNacellePacket(
  NacellePacket &packet,
- int16_t rpm
+ int16_t rpm,
+ int16_t angularAccell_RPMPS
  );
 
+// DONE: add power stuff
 void makeLoadboxPacket(
   LoadboxPacket &packet,
-  uint8_t safety
-  // todo add power stuff
+  int16_t d_mVPS,
+  int16_t current_mA,
+  int16_t dIPS,
+  ESTOP_TYPE_NET safety
 );
 
 // Debug printing
