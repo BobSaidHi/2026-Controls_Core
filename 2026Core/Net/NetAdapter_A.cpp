@@ -85,7 +85,9 @@ uint32_t NetAdapter_A::testThroughput(uint_fast8_t maxTime,
         ESP_LOGV(TAG, "Packet Ready");
 
         // Actually send the packet
-        this->sendAll(packet.getRawPacket(), packet.getLengthValid());
+        if (!this->sendAll(packet.getRawPacket(), packet.getLengthValid())) {
+            ESP_LOGE(TAG, "Packet send failed");
+        }
         // Statistics
         bytesSent += WTbNetConfig::MAX_PACKET_DATA_LENGTH;
     }
@@ -115,7 +117,7 @@ uint32_t NetAdapter_A::testThroughput(uint_fast8_t maxTime,
     ESP_LOGV(TAG, "Test Complete");
 
     // Compute actual speeds
-    ESP_LOGD(TAG, "bytesSent: ", bytesSent);
+    ESP_LOGD(TAG, "bytesSent: %u", bytesSent);
     uint64_t elapsedTime = millis() - startTime;
     ESP_LOGD(TAG, "timeElapsed: ", elapsedTime);
     auto netSpeed = static_cast<uint32_t>(static_cast<uint64_t>(bytesSent) *

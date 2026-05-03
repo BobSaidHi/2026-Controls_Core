@@ -127,8 +127,9 @@ uint8_t AdapterWLAN::identifyOptimalChannel() {
             ch1RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_3_WEIGHT);
             ch6RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_2_WEIGHT);
         } else if (WiFi.channel(i) == 5) { // Ch. 5 overlaps with ch. 1 and 6
-            ch1RSSITotal += static_cast<uint_fast16_t>(
-                (float)inverseRSSI * WTbNetConfig::OFFSET_4_WEIGHT);
+            ch1RSSITotal +=
+                static_cast<uint_fast16_t>(static_cast<float>(inverseRSSI) *
+                                           WTbNetConfig::OFFSET_4_WEIGHT);
             ch6RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_1_WEIGHT);
         } else if (WiFi.channel(i) == 6) { // Ch. 6
             ch6RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_0_WEIGHT);
@@ -143,8 +144,9 @@ uint8_t AdapterWLAN::identifyOptimalChannel() {
             ch6RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_3_WEIGHT);
             ch11RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_2_WEIGHT);
         } else if (WiFi.channel(i) == 10) { // Ch. 10 overlaps with ch. 6 and 11
-            ch6RSSITotal += static_cast<uint_fast16_t>(
-                (float)inverseRSSI * WTbNetConfig::OFFSET_4_WEIGHT);
+            ch6RSSITotal +=
+                static_cast<uint_fast16_t>(static_cast<float>(inverseRSSI) *
+                                           WTbNetConfig::OFFSET_4_WEIGHT);
             ch11RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_1_WEIGHT);
         } else if (WiFi.channel(i) == 11) { // Ch. 11
             ch11RSSITotal += (inverseRSSI * WTbNetConfig::OFFSET_0_WEIGHT);
@@ -347,14 +349,14 @@ bool AdapterWLAN::begin(
 
 bool AdapterWLAN::setMaxTxPower(TxDbmToESP txPower) {
     // Set the maximum transmit power
-    if (esp_wifi_set_max_tx_power((int8_t)std::to_underlying(txPower)) !=
-        ESP_OK) {
+    if (esp_wifi_set_max_tx_power(
+            static_cast<int8_t>(std::to_underlying(txPower))) != ESP_OK) {
         ESP_LOGE(TAG, "Failed to set max tx power");
         return false;
     }
 
     // Verify the transmit power was set correctly
-    ESP_LOGI(TAG, "Set max tx power to ", getMaxTxPower_dBm());
+    ESP_LOGI(TAG, "Set max tx power to %d dBm", getMaxTxPower_dBm());
     if (getMaxTxPower_Raw() != txPower) {
         ESP_LOGE(TAG, "Tx max power verification failed");
         return false;
@@ -372,11 +374,13 @@ int_fast8_t AdapterWLAN::getMaxTxPower_Raw() {
         ESP_LOGE(TAG, "Failed to get max tx power");
         return -1;
     } else if (txPower < 0 || txPower > 80) {
-        ESP_LOGE(TAG, "Tx power out of range: ", txPower);
+        ESP_LOGE(TAG, "Tx power out of range: %d", txPower);
+    } else {
+        // Tx power is valid
     }
 
     // Return result
-    ESP_LOGD(TAG, "Tx power ", txPower);
+    ESP_LOGD(TAG, "Tx power: %d", txPower);
     return txPower;
 }
 
@@ -401,7 +405,7 @@ bool AdapterWLAN::sendAll(
 // todo: Sometimes this gets printed in terms of ESP units instead of dbm
 int_fast8_t AdapterWLAN::getMaxTxPower_dBm() {
     const int_fast8_t txPower = getMaxTxPower_Raw();
-    ESP_LOGD(TAG, "Tx power (dBm): ", txPower);
+    ESP_LOGD(TAG, "Tx power (dBm): %d", txPower);
     return static_cast<int_fast8_t>(txPower * 0.25);
 }
 
