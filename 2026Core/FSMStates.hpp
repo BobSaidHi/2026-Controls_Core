@@ -7,7 +7,7 @@ namespace FSMCommon {
         sINIT = 0,
         sESTOP,
         sRST,
-        sStartLoad,
+        sStartRun,
         sRunLoad,
         sCurtail
     };
