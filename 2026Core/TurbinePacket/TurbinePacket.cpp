@@ -5,9 +5,9 @@
 // =====================
 
 void makeNacellePacket(NacellePacket &packet, int16_t rpm,
-                       int16_t angularAccell_RPMPS) {
+                       int16_t angularAccel_RPMPS) {
     packet.rpm = rpm;
-    packet.angularAccell_RPMPS = angularAccell_RPMPS;
+    packet.angularAccel_RPMPS = angularAccel_RPMPS;
 }
 
 void makeLoadboxPacket(LoadboxPacket &packet, int16_t d_mVPS,
@@ -28,7 +28,7 @@ void printNacellePacket(const NacellePacket &packet, Stream &out) {
     out.print("RPM: ");
     out.println(packet.rpm);
     out.print("dRPM/s: ");
-    out.println(packet.angularAccell_RPMPS);
+    out.println(packet.angularAccel_RPMPS);
     out.println("-----------------------");
 }
 

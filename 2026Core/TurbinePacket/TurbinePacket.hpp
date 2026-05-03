@@ -28,7 +28,7 @@ enum class ESTOP_TYPE_FAST : uint_fast8_t {
 // =====================
 struct NacellePacket {
     int16_t rpm;
-    int16_t angularAccell_RPMPS;
+    int16_t angularAccel_RPMPS;
 };
 
 // =====================
@@ -48,7 +48,7 @@ struct LoadboxPacket {
 
 // Build packets
 void makeNacellePacket(NacellePacket &packet, int16_t rpm,
-                       int16_t angularAccell_RPMPS);
+                       int16_t angularAccel_RPMPS);
 
 // DONE: add power stuff
 void makeLoadboxPacket(LoadboxPacket &packet, int16_t d_mVPS,
