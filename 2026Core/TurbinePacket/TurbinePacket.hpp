@@ -3,6 +3,8 @@
 
 #include <Arduino.h>
 
+#include <utility>
+
 // Sender IDs
 const uint8_t SENDER_NACELLE = 1;
 const uint8_t SENDER_LOADBOX = 2;
@@ -16,11 +18,15 @@ enum class ESTOP_TYPE_NET : uint8_t {
 };
 
 enum class ESTOP_TYPE_FAST : uint_fast8_t {
-    NONE = static_cast<uint_fast8_t>(ESTOP_TYPE_NET::NONE),
-    BUTTON = static_cast<uint_fast8_t>(ESTOP_TYPE_NET::BUTTON),
-    LOAD_DISCONNECT =
-        static_cast<uint_fast8_t>(ESTOP_TYPE_NET::LOAD_DISCONNECT),
-    RESERVED = static_cast<uint_fast8_t>(ESTOP_TYPE_NET::RESERVED)
+    NONE = static_cast<uint_fast8_t>(std::to_underlying(ESTOP_TYPE_NET::NONE)),
+    BUTTON =
+        static_cast<uint_fast8_t>(std::to_underlying(ESTOP_TYPE_NET::BUTTON)),
+    LOAD_DISCONNECT_I = static_cast<uint_fast8_t>(
+        std::to_underlying(ESTOP_TYPE_NET::LOAD_DISCONNECT_I)),
+    LOAD_DISCONNECT_E = static_cast<uint_fast8_t>(
+        std::to_underlying(ESTOP_TYPE_NET::LOAD_DISCONNECT_E)),
+    RESERVED =
+        static_cast<uint_fast8_t>(std::to_underlying(ESTOP_TYPE_NET::RESERVED))
 };
 
 // =====================
