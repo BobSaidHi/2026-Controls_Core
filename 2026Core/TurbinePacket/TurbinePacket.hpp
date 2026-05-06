@@ -13,7 +13,8 @@ const uint8_t SENDER_LOADBOX = 2;
 enum class ESTOP_TYPE_NET : uint8_t {
     NONE = 0,
     BUTTON = 1,
-    LOAD_DISCONNECT = 2,
+    LOAD_DISCONNECT_I = 2,
+    LOAD_DISCONNECT_E = 3,
     RESERVED = static_cast<uint8_t>(-1)
 };
 
