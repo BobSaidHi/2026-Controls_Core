@@ -45,6 +45,7 @@ struct NacellePacket {
 struct LoadboxPacket {
     int16_t d_mVPS;
     int16_t current_mA;
+    uint16_t powerIfWholeNum_mW;
     int16_t dIPS;
     ESTOP_TYPE_NET safety;
 };
@@ -59,7 +60,8 @@ void makeNacellePacket(NacellePacket &packet, int16_t rpm,
 
 // DONE: add power stuff
 void makeLoadboxPacket(LoadboxPacket &packet, int16_t d_mVPS,
-                       int16_t current_mA, int16_t dIPS, ESTOP_TYPE_NET safety);
+                       int16_t current_mA, int16_t dIPS,
+                       uint16_t powerIfWholeNum_mW, ESTOP_TYPE_NET safety);
 
 // Debug printing
 void printNacellePacket(const NacellePacket &packet, Stream &out);
